@@ -3,66 +3,89 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>STORY ENIGMA - Full Feature Engine</title>
+  <title>Story of Enigma - Call of Cthulhu Companion V5</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #0a0a0a; color: #e0e0e0; font-family: Arial, sans-serif; overflow-x: hidden; }
+    body { background: #0c0c0b; color: #d4cfb8; font-family: 'Courier New', Courier, monospace; overflow-x: hidden; }
     #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; }
     
-    /* OPENING SCREEN */
-    .opening-container { max-width: 500px; margin: 40px auto; padding: 20px; text-align: center; }
-    .title { font-size: 2.5rem; color: #ffd700; letter-spacing: 2px; margin-bottom: 5px; }
-    .subtitle { font-size: 1rem; color: #888; margin-bottom: 30px; }
-    .section { margin-bottom: 30px; }
-    .list-container { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-    .story-button { padding: 15px; background: #1a2e1a; border: 1px solid #2d5a2d; border-radius: 6px; color: #fff; text-align: left; font-size: 1rem; cursor: pointer; display: flex; justify-content: space-between; }
-    .main-action-btn { width: 100%; padding: 12px; background: #2d5a2d; border: none; border-radius: 6px; color: #fff; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
-    .form-box { background: #1c1c1c; padding: 20px; border-radius: 8px; border: 1px solid #333; display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; text-align: left; }
-    .input-text { padding: 10px; background: #111; border: 1px solid #444; border-radius: 4px; color: #fff; font-size: 0.9rem; width: 100%; }
-    .input-row { display: flex; gap: 10px; }
-
-    /* SETUP MODE (PORTRAIT) */
-    .setup-container { display: flex; flex-direction: column; height: 100vh; padding: 10px; }
-    .header-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 10px; }
-    .back-btn { background: #333; border: none; color: #fff; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
-    .tab-bar { display: flex; gap: 5px; margin: 10px 0; overflow-x: auto; }
-    .tab-btn { flex: 1; padding: 10px; background: #1e1e1e; border: 1px solid #333; color: #aaa; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
-    .tab-btn.active { background: #2d5a2d; color: #fff; border: 1px solid #55a855; }
-    .setup-content { flex: 1; overflow-y: auto; padding-bottom: 80px; }
-    .setup-card { background: #1c1c1c; border: 1px solid #333; padding: 12px; border-radius: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-    .del-btn { background: #aa3333; border: none; color: #fff; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
+    .header-title { text-align: center; padding: 25px 10px 5px 10px; letter-spacing: 4px; color: #cca54a; font-size: 1.8rem; font-weight: bold; }
+    .header-subtitle { text-align: center; font-size: 0.75rem; color: #7c7662; letter-spacing: 2px; margin-bottom: 25px; }
     
-    /* FOOTER */
-    .footer-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #1a1a1a; border-top: 1px solid #333; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; z-index: 100; }
-    .start-btn { background: #2d5a2d; border: none; color: #fff; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1rem; }
-
-    /* MAIN MODE */
-    .main-container { display: flex; width: 100vw; height: 100vh; overflow: hidden; position: relative; }
-    @media screen and (max-width: 768px) and (orientation: portrait) {
-      .main-container { transform: rotate(90deg); transform-origin: bottom left; position: absolute; top: -100vw; left: 0; width: 100vh; height: 100vw; }
+    /* GAMES STORY OF ENIGMA CENTER DISPLAY */
+    .enigma-story-title { 
+      text-align: center; 
+      background: #11110f; 
+      border: 1px dashed #8a7846; 
+      padding: 20px 15px; 
+      margin: 20px 15px 30px 15px; 
+      font-size: 1.2rem; 
+      font-weight: bold;
+      letter-spacing: 3px;
+      color: #cca54a;
+      text-transform: uppercase;
     }
-    .map-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; display: flex; justify-content: center; align-items: center; background: #111; }
-    .map-layer.frozen { pointer-events: none; filter: brightness(0.2) blur(3px); }
     
-    .fixed-menu-btn { position: absolute; z-index: 10; width: 34px; height: 34px; background: #1c1c1c; border: 1px solid #ffd700; color: #ffd700; font-weight: bold; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .fixed-menu-btn.active { background: #ffd700; color: #1c1c1c; }
-    .popover-panel { position: absolute; top: 10px; left: 60px; right: 10px; bottom: 75px; background: rgba(15, 15, 15, 0.98); border: 2px solid #ffd700; border-radius: 8px; z-index: 20; padding: 15px; overflow-y: auto; }
-    .popover-header { display: flex; justify-content: space-between; border-bottom: 1px solid #ffd700; padding-bottom: 5px; margin-bottom: 15px; }
+    .menu-utama-container { display: flex; flex-direction: column; gap: 15px; padding: 0 15px; }
+    .btn-utama { background: #1c1c19; border: 1px solid #cca54a; color: #cca54a; padding: 15px; font-size: 1rem; font-weight: bold; font-family: monospace; border-radius: 6px; cursor: pointer; text-align: center; letter-spacing: 1px; transition: all 0.2s; }
+    .btn-utama:hover { background: #24221c; }
+    .btn-secondary { background: transparent; border: 1px solid #444; color: #888; padding: 12px; font-size: 0.9rem; font-family: monospace; border-radius: 6px; cursor: pointer; text-align: center; }
+    .btn-secondary:hover { border-color: #7c7662; color: #d4cfb8; }
     
-    .stat-card-grid { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
-    .coc-stat-box { background: linear-gradient(135deg, #0f2613 0%, #071409 100%); border: 1px solid #2d5a2d; border-radius: 6px; padding: 8px; min-width: 80px; text-align: center; }
-    .coc-label { display: block; font-size: 0.65rem; color: #8cd98c; margin-bottom: 4px; }
-    .coc-num-row { display: flex; justify-content: space-between; align-items: center; }
-    .coc-btn { background: #1c3d20; border: none; color: #fff; width: 18px; height: 18px; border-radius: 3px; cursor: pointer; font-weight: bold; }
-    .coc-number { font-size: 1.3rem; font-weight: bold; color: #fff; }
-
-    /* BAR SS & LOGS */
-    .bar-ss { position: absolute; bottom: 0; left: 0; right: 0; height: 65px; background: #141414; border-top: 2px solid #333; z-index: 15; display: flex; align-items: center; padding: 0 10px; gap: 8px; overflow-x: auto; }
-    .ss-select, .ss-input { background: #222; border: 1px solid #444; color: #fff; padding: 6px; border-radius: 4px; font-size: 0.8rem; }
-    .ss-input-num { width: 50px; text-align: center; font-weight: bold; color: #ffd700; }
-    .ss-btn { background: #2d5a2d; border: none; color: #fff; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-    .log-panel { margin-top: 15px; background: #111; padding: 10px; border-radius: 6px; max-height: 200px; overflow-y: auto; }
-    .log-item { font-family: monospace; font-size: 0.8rem; border-bottom: 1px solid #222; padding: 4px 0; }
+    .tab-container { display: flex; border-bottom: 1px solid #2d2a22; margin: 0 10px; }
+    .tab-nav { flex: 1; text-align: center; padding: 10px; background: #141412; border: 1px solid #2d2a22; border-bottom: none; color: #7c7662; font-size: 0.85rem; cursor: pointer; }
+    .tab-nav.active { background: #1c1c19; color: #cca54a; border-top: 2px solid #cca54a; font-weight: bold; }
+    .content-panel { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 80px; }
+    
+    .box-card { background: #161614; border: 1px solid #2d2a22; border-radius: 6px; padding: 12px; margin-bottom: 12px; position: relative; }
+    .btn-gold-outline { background: transparent; border: 1px solid #cca54a; color: #cca54a; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; margin-bottom: 10px; }
+    .form-group { margin-bottom: 10px; }
+    .form-group label { display: block; font-size: 0.7rem; color: #8a7846; margin-bottom: 3px; letter-spacing: 1px; }
+    .input-field { width: 100%; padding: 8px; background: #0c0c0b; border: 1px solid #3d392e; color: #d4cfb8; border-radius: 4px; font-family: monospace; font-size: 0.85rem; }
+    
+    .carousel-wrapper { display: flex; align-items: center; justify-content: space-between; background: #11110f; border: 1px solid #2d2a22; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
+    .carousel-btn { background: #1c1c19; border: 1px solid #3d392e; color: #cca54a; font-size: 1.2rem; width: 32px; height: 32px; cursor: pointer; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+    .carousel-info-text { font-size: 0.75rem; color: #7c7662; letter-spacing: 1px; }
+    
+    .char-profile-layout { display: flex; gap: 15px; margin-bottom: 12px; }
+    .char-photo-box { width: 90px; height: 135px; background: #222; border: 1px solid #3d392e; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .char-photo-box img { width: 100%; height: 100%; object-fit: cover; }
+    .char-name-display { font-size: 1.4rem; font-weight: bold; color: #cca54a; margin-bottom: 5px; }
+    
+    .btn-start-play { position: fixed; bottom: 15px; right: 15px; background: #b08d42; color: #0c0c0b; border: none; padding: 10px 20px; font-size: 0.9rem; font-weight: bold; border-radius: 20px; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.5); z-index: 99; }
+    
+    /* MAIN GAMEPLAY LAYOUT */
+    .main-game-screen { display: flex; width: 100vw; height: 100vh; background: #050505; position: relative; }
+    .sidebar-menu { width: 50px; background: #11110f; border-right: 1px solid #2d2a22; display: flex; flex-direction: column; align-items: center; padding-top: 10px; gap: 8px; z-index: 10; }
+    .menu-btn { width: 36px; height: 36px; background: #161614; border: 1px solid #3d392e; color: #7c7662; font-weight: bold; font-family: monospace; cursor: pointer; border-radius: 4px; font-size: 0.9rem; }
+    .menu-btn.active { border-color: #cca54a; color: #cca54a; background: #24221c; }
+    
+    .workspace { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; padding-bottom: 90px; }
+    .panel-header { font-size: 0.8rem; color: #cca54a; border-bottom: 1px solid #2d2a22; padding-bottom: 4px; margin-bottom: 10px; display: flex; justify-content: space-between; font-weight: bold; }
+    
+    .board-container { position: relative; width: 100%; height: 340px; background: #141412; overflow: hidden; margin-bottom: 12px; border-radius: 4px; background-size: cover; background-position: center; }
+    
+    /* DETAIL TOKEN BARU: MURNI KOTAK FOTO TANPA BORDER & LABEL */
+    .token-item { 
+      position: absolute; 
+      width: 55px; 
+      height: 55px; 
+      cursor: move; 
+      display: flex; 
+      overflow: hidden; 
+      user-select: none; 
+      border-radius: 0px; /* Tetap Kotak Sempurna */
+      border: none !important;
+      background: transparent !important;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+    .token-item img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+    
+    .bar-select { background: #1c1c19; border: 1px solid #3d392e; color: #d4cfb8; padding: 6px; border-radius: 4px; font-family: monospace; font-size: 0.75rem; }
+    .bar-btn { background: #b08d42; border: none; color: #0c0c0b; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.75rem; white-space: nowrap; }
+    
+    .movement-panel { background: #1a1a17; border: 1px solid #8a7846; border-radius: 6px; padding: 10px; margin-bottom: 12px; display: none; }
+    .checkbox-row { display: flex; align-items: center; gap: 8px; margin: 4px 0; font-size: 0.8rem; }
   </style>
 </head>
 <body>
@@ -70,315 +93,502 @@
   <div id="app"></div>
 
   <script>
-    const STORAGE_KEY = "STORY_ENIGMA_LOCAL_V2";
-    let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || { savedGames: [], currentStoryId: null };
-
-    // Membuat data game baru yang benar-benar bersih/kosong
-    const createBlankData = () => ({ maps: [], characters: [], items: [], monsters: [], logs: [] });
-
-    function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-    function getActiveGame() { return state.savedGames.find(g => g.id === state.currentStoryId); }
-
-    const appEl = document.getElementById("app");
-
-    function navigate() {
-      if (!state.currentStoryId) { renderOpening(); } 
-      else {
-        const game = getActiveGame();
-        if (game.mode === "setup") { renderSetupMode(game); } 
-        else { renderMainMode(game); }
-      }
-    }
-
-    // SCREEN 1: OPENING
-    function renderOpening() {
-      let listHtml = state.savedGames.map(game => `
-        <button class="story-button" onclick="selectStory('${game.id}')">
-          📁 ${game.title} <span>(${game.mode.toUpperCase()})</span>
-        </button>
-      `).join('');
-
-      appEl.innerHTML = `
-        <div class="opening-container">
-          <h1 class="title">STORY ENIGMA</h1>
-          <p class="subtitle">Aplikasi Engine TTRPG Modular</p>
-          <div class="section">
-            <div class="form-box">
-              <h3 style="color:#ffd700;">Buat Skenario / Judul Baru</h3>
-              <input type="text" id="newStoryTitle" class="input-text" placeholder="Masukkan Nama Skenario..." />
-              <button class="main-action-btn" onclick="createNewStory()">Buat & Masuk Setup</button>
-            </div>
-          </div>
-          ${state.savedGames.length > 0 ? `<div class="section"><h4 style="text-align:left; color:#aaa; margin-bottom:5px;">Lanjutkan Skenario:</h4><div class="list-container">${listHtml}</div></div>` : ''}
-        </div>
-      `;
-    }
-
-    window.createNewStory = () => {
-      const txt = document.getElementById("newStoryTitle").value.trim();
-      if (!txt) return alert("Judul wajib diisi!");
-      const newGame = { id: "g_" + Date.now(), title: txt, mode: "setup", data: createBlankData() };
-      state.savedGames.push(newGame);
-      state.currentStoryId = newGame.id;
-      saveState(); navigate();
-    };
-
-    window.selectStory = (id) => { state.currentStoryId = id; saveState(); navigate(); };
-
-    // SCREEN 2: SETUP MODE (BISA TAMBAH SEMUA KOMPONEN SECARA BEBAS)
-    let curSetupTab = "peta";
-    function renderSetupMode(game) {
-      appEl.innerHTML = `
-        <div class="setup-container">
-          <div class="header-bar">
-            <button class="back-btn" onclick="exitToOpening()">⬅ Keluar</button>
-            <h2>${game.title}</h2>
-          </div>
-          <div class="tab-bar">
-            <button class="tab-btn ${curSetupTab==='peta'?'active':''}" onclick="setSetupTab('peta')">🗺️ PETA</button>
-            <button class="tab-btn ${curSetupTab==='karakter'?'active':''}" onclick="setSetupTab('karakter')">👤 INVESTIGATOR</button>
-            <button class="tab-btn ${curSetupTab==='item'?'active':''}" onclick="setSetupTab('item')">📦 ITEM</button>
-            <button class="tab-btn ${curSetupTab==='n_panel'?'active':''}" onclick="setSetupTab('n_panel')">👹 ANCAMAN / NPC</button>
-          </div>
-          <div class="setup-content">${renderSetupTabContent(game)}</div>
-          <div class="footer-bar">
-            <span style="color:#666; font-size:0.8rem;">Fase Penyusunan</span>
-            <button class="start-btn" onclick="tryStartMain()">Mulai Mode Main ▶</button>
-          </div>
-        </div>
-      `;
-    }
-
-    function renderSetupTabContent(game) {
-      if (curSetupTab === 'peta') {
-        let itemsHtml = game.data.maps.map(m => `<div class="setup-card"><span>🗺️ ${m.name}</span><button class="del-btn" onclick="deleteData('maps','${m.id}')">Hapus</button></div>`).join('');
-        return `
-          <div class="form-box">
-            <h4>Tambah Peta / Lokasi</h4>
-            <input type="text" id="addMapName" class="input-text" placeholder="Contoh: Rumah Sakit Jiwa Lantai 1" />
-            <button class="main-action-btn" onclick="addData('maps')">+ Simpan Peta</button>
-          </div>
-          <div>${itemsHtml || '<p style="color:#666;text-align:center;">Belum ada peta. Silakan tambah di atas.</p>'}</div>
-        `;
-      }
-      if (curSetupTab === 'karakter') {
-        let itemsHtml = game.data.characters.map(c => `<div class="setup-card"><div><strong>👤 ${c.name}</strong><br><small style="color:#aaa;">HP: ${c.stats.hp.max} | SAN: ${c.stats.sanity}</small></div><button class="del-btn" onclick="deleteData('characters','${c.id}')">Hapus</button></div>`).join('');
-        return `
-          <div class="form-box">
-            <h4>Tambah Investigator</h4>
-            <input type="text" id="addCharName" class="input-text" placeholder="Nama Karakter..." />
-            <div class="input-row">
-              <input type="number" id="addCharHp" class="input-text" placeholder="Max HP" value="10" />
-              <input type="number" id="addCharSan" class="input-text" placeholder="Target Sanity (2-12)" value="7" />
-            </div>
-            <button class="main-action-btn" onclick="addData('characters')">+ Simpan Karakter</button>
-          </div>
-          <div>${itemsHtml || '<p style="color:#666;text-align:center;">Belum ada karakter.</p>'}</div>
-        `;
-      }
-      if (curSetupTab === 'item') {
-        let itemsHtml = game.data.items.map(i => `<div class="setup-card"><span>📦 [${i.type.toUpperCase()}] ${i.name}</span><button class="del-btn" onclick="deleteData('items','${i.id}')">Hapus</button></div>`).join('');
-        return `
-          <div class="form-box">
-            <h4>Tambah Item / Senjata</h4>
-            <input type="text" id="addItemName" class="input-text" placeholder="Nama Item..." />
-            <select id="addItemType" class="input-text"><option value="alat">Alat Umum</option><option value="senjata">Senjata</option><option value="buku">Buku/Petunjuk</option></select>
-            <button class="main-action-btn" onclick="addData('items')">+ Simpan Item</button>
-          </div>
-          <div>${itemsHtml || '<p style="color:#666;text-align:center;">Belum ada item.</p>'}</div>
-        `;
-      }
-      if (curSetupTab === 'n_panel') {
-        let itemsHtml = game.data.monsters.map(m => `<div class="setup-card"><span>👹 [${m.kind.toUpperCase()}] ${m.name} (HP: ${m.hp.max})</span><button class="del-btn" onclick="deleteData('monsters','${m.id}')">Hapus</button></div>`).join('');
-        return `
-          <div class="form-box">
-            <h4>Tambah Monster / NPC / Villain</h4>
-            <input type="text" id="addMonName" class="input-text" placeholder="Nama Entitas..." />
-            <div class="input-row">
-              <select id="addMonKind" class="input-text"><option value="monster">Monster</option><option value="npc">NPC Netral</option><option value="villain">Villain Utama</option></select>
-              <input type="number" id="addMonHp" class="input-text" placeholder="HP" value="12" />
-            </div>
-            <button class="main-action-btn" onclick="addData('monsters')">+ Simpan Entitas</button>
-          </div>
-          <div>${itemsHtml || '<p style="color:#666;text-align:center;">Belum ada entitas bahaya.</p>'}</div>
-        `;
-      }
-    }
-
-    window.setSetupTab = (t) => { curSetupTab = t; navigate(); };
-    window.exitToOpening = () => { state.currentStoryId = null; saveState(); navigate(); };
-
-    // FUNGSI DINAMIS UNTUK TAMBAH DATA (INPUT BARU)
-    window.addData = (type) => {
-      const game = getActiveGame();
-      if (type === 'maps') {
-        const val = document.getElementById("addMapName").value.trim();
-        if(!val) return; game.data.maps.push({ id: "m_" + Date.now(), name: val });
-      } else if (type === 'characters') {
-        const name = document.getElementById("addCharName").value.trim();
-        const hp = parseInt(document.getElementById("addCharHp").value) || 10;
-        const san = parseInt(document.getElementById("addCharSan").value) || 7;
-        if(!name) return; game.data.characters.push({ id: "c_" + Date.now(), name, stats: { hp: { cur: hp, max: hp }, sanity: san, luck: 6 }, isDead: false });
-      } else if (type === 'items') {
-        const name = document.getElementById("addItemName").value.trim();
-        const t = document.getElementById("addItemType").value;
-        if(!name) return; game.data.items.push({ id: "i_" + Date.now(), name, type: t });
-      } else if (type === 'monsters') {
-        const name = document.getElementById("addMonName").value.trim();
-        const kind = document.getElementById("addMonKind").value;
-        const hp = parseInt(document.getElementById("addMonHp").value) || 10;
-        if(!name) return; game.data.monsters.push({ id: "n_" + Date.now(), name, kind, hp: { cur: hp, max: hp } });
-      }
-      saveState(); navigate();
-    };
-
-    window.deleteData = (type, id) => {
-      const game = getActiveGame();
-      game.data[type] = game.data[type].filter(item => item.id !== id);
-      saveState(); navigate();
-    };
-
-    window.tryStartMain = () => {
-      const game = getActiveGame();
-      if (game.data.maps.length === 0 || game.data.characters.length === 0) {
-        return alert("Minimal harus mengisi 1 Peta dan 1 Investigator untuk mulai bermain!");
-      }
-      game.mode = "main"; saveState(); navigate();
-    };
-
-    // SCREEN 3: MAIN MODE (LANDSCAPE PENUH)
-    let activeMainMenu = null;
-    let selectedCharIdx = 0;
-
-    function renderMainMode(game) {
-      // Opsi dropdown untuk Bar SS diisi otomatis berdasarkan data yang diinput user
-      let ssOptions = game.data.characters.map(c => `<option value="${c.name}">👤 ${c.name} (Skill)</option>`).join('');
-      ssOptions += game.data.monsters.map(m => `<option value="${m.name}">👹 ${m.name} (Serangan)</option>`).join('');
-
-      appEl.innerHTML = `
-        <div class="main-container">
-          <div class="map-layer ${activeMainMenu ? 'frozen' : ''}">
-            <div style="text-align:center;">
-              <h2 style="color:#ffd700; margin-bottom:5px;">🗺️ AKTIF: ${game.data.maps[0]?.name}</h2>
-              <p style="font-size:0.85rem; color:#888;">Gunakan tombol navigasi M, C, S, I, N di pojok kiri untuk membuka menu.</p>
-            </div>
-          </div>
-
-          <!-- HURUF TAKTIS M C S I N -->
-          <button class="fixed-menu-btn ${activeMainMenu==='M'?'active':''}" style="left:8px; top:10px;" onclick="toggleMainMenu('M')">M</button>
-          <button class="fixed-menu-btn ${activeMainMenu==='C'?'active':''}" style="left:46px; top:10px;" onclick="toggleMainMenu('C')">C</button>
-          <button class="fixed-menu-btn ${activeMainMenu==='S'?'active':''}" style="left:84px; top:10px;" onclick="toggleMainMenu('S')">S</button>
-          <button class="fixed-menu-btn ${activeMainMenu==='I'?'active':''}" style="left:8px; top:46px;" onclick="toggleMainMenu('I')">I</button>
-          <button class="fixed-menu-btn ${activeMainMenu==='N'?'active':''}" style="left:8px; top:90px;" onclick="toggleMainMenu('N')">N</button>
-
-          <div style="position:absolute; right:10px; top:10px; z-index:30;">
-            <button onclick="changeMode('setup')" style="background:#aa3333; border:none; color:#fff; padding:5px 10px; border-radius:4px; font-size:0.75rem; cursor:pointer;">⚙️ Edit Setup</button>
-          </div>
-
-          <!-- POPOVER DISPLAY PANEL -->
-          ${activeMainMenu ? `
-            <div class="popover-panel">
-              <div class="popover-header">
-                <h3 style="color:#ffd700;">MENU PANEL: ${activeMainMenu}</h3>
-                <button onclick="toggleMainMenu(null)" style="background:transparent; border:none; color:#888; cursor:pointer;">✕ Tutup</button>
-              </div>
-              <div>${renderMainPopoverContent(game)}</div>
-            </div>
-          ` : ''}
-
-          <!-- BAR SS BAWAH -->
-          <div class="bar-ss">
-            <span style="font-size:0.75rem; color:#ffd700; white-space:nowrap;">🎲 ROLL 2D6:</span>
-            <select id="ssSource" class="ss-select">${ssOptions || '<option value="Skenario">Skenario</option>'}</select>
-            <input type="text" id="ssAction" class="ss-input" placeholder="Aksi/Skill..." style="flex:1;" />
-            <span style="font-size:0.7rem; color:#aaa;">Target:</span>
-            <input type="number" id="ssTarget" class="ss-input ss-input-num" min="2" max="12" value="7" />
-            <span style="font-size:0.7rem; color:#aaa;">Dadu Fisik:</span>
-            <input type="number" id="ssRoll" class="ss-input ss-input-num" min="2" max="12" placeholder="2-12" />
-            <button class="ss-btn" onclick="submitRoll()">Roll</button>
-          </div>
-        </div>
-      `;
-    }
-
-    function renderMainPopoverContent(game) {
-      if (activeMainMenu === 'M') {
-        return `<h4>Daftar Peta Tersedia:</h4><ul>` + game.data.maps.map(m => `<li>📍 ${m.name}</li>`).join('') + `</ul>`;
-      }
-      if (activeMainMenu === 'C') {
-        return `<h4>Daftar Rombongan Investigator:</h4><ul>` + game.data.characters.map(c => `<li>👤 ${c.name} ${c.isDead?'[MATI]':''}</li>`).join('') + `</ul>`;
-      }
-      if (activeMainMenu === 'S') {
-        if(game.data.characters.length === 0) return "<p>Tidak ada karakter.</p>";
-        const c = game.data.characters[selectedCharIdx];
-        const isHorrorActive = c.stats.hp.cur <= (c.stats.hp.max / 2);
-        return `
-          <div style="display:flex; flex-direction:column; gap:10px;">
-            <div style="display:flex; justify-content:space-between;">
-              <h4>Status Investigator: ${c.name}</h4>
-              <div>
-                <button onclick="modSelectedCharIdx(-1)" class="coc-btn" ${selectedCharIdx===0?'disabled':''}>‹</button>
-                <span>${selectedCharIdx+1}/${game.data.characters.length}</span>
-                <button onclick="modSelectedCharIdx(1)" class="coc-btn" ${selectedCharIdx>=game.data.characters.length-1?'disabled':''}>›</button>
-              </div>
-            </div>
-            <div class="stat-card-grid">
-              <div class="coc-stat-box"><span class="coc-label">HP</span><div class="coc-num-row"><button class="coc-btn" onclick="changeLiveHp(-1)">-</button><span class="coc-number">${c.stats.hp.cur}</span><button class="coc-btn" onclick="changeLiveHp(1)">+</button></div><span class="coc-label">Max: ${c.stats.hp.max}</span></div>
-              <div class="coc-stat-box"><span class="coc-label">SANITY TARGET</span><div class="coc-num-row"><span></span><span class="coc-number">${c.stats.sanity}</span><span></span></div></div>
-            </div>
-            <div style="background:#111; padding:8px; border-radius:4px; border:1px solid ${isHorrorActive?'#8b0000':'#222'};">
-              <span style="color:${isHorrorActive?'#ff4444':'#888'}; font-weight:bold; font-size:0.8rem;">💀 STATUS DADU HOROR: ${isHorrorActive?'AKTIF (HP ≤ 50%)':'NORMAL'}</span>
-            </div>
-          </div>
-        `;
-      }
-      if (activeMainMenu === 'I') {
-        return `<h4>Inventori Item Skenario:</h4><ul>` + game.data.items.map(i => `<li>📦 [${i.type.toUpperCase()}] ${i.name}</li>`).join('') + `</ul>`;
-      }
-      if (activeMainMenu === 'N') {
-        return `<h4>Daftar Bahaya / NPC:</h4>` + game.data.monsters.map((m, idx) => `
-          <div style="background:#111; padding:8px; border-radius:4px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
-            <span>👹 <strong>${m.name}</strong> (${m.kind.toUpperCase()})</span>
-            <div class="coc-num-row" style="gap:10px;">
-              <button class="coc-btn" onclick="changeLiveMonsterHp(${idx},-1)">-</button>
-              <span style="color:#ff4444; font-weight:bold;">HP: ${m.hp.cur}/${m.hp.max}</span>
-              <button class="coc-btn" onclick="changeLiveMonsterHp(${idx},1)">+</button>
-            </div>
-          </div>
-        `).join('');
-      }
-    }
-
-    window.toggleMainMenu = (m) => { activeMainMenu = m; navigate(); };
-    window.modSelectedCharIdx = (delta) => { selectedCharIdx += delta; navigate(); };
+    const STORAGE_KEY = "ARKHAM_DOSSIER_V5_SPLIT_PARTY";
     
-    window.changeLiveHp = (delta) => {
-      const g = getActiveGame(); const c = g.data.characters[selectedCharIdx];
-      c.stats.hp.cur = Math.max(0, Math.min(c.stats.hp.max, c.stats.hp.cur + delta));
-      c.isDead = (c.stats.hp.cur === 0); saveState(); navigate();
-    };
-
-    window.changeLiveMonsterHp = (idx, delta) => {
-      const g = getActiveGame(); const m = g.data.monsters[idx];
-      m.hp.cur = Math.max(0, Math.min(m.hp.max, m.hp.cur + delta));
-      saveState(); navigate();
-    };
-
-    window.submitRoll = () => {
-      const source = document.getElementById("ssSource").value;
-      const action = document.getElementById("ssAction").value.trim() || "Pengecekan Sistem";
-      const target = parseInt(document.getElementById("ssTarget").value);
-      const roll = parseInt(document.getElementById("ssRoll").value);
-
-      if(isNaN(roll) || roll < 2 || roll > 12) return alert("Masukkan angka dadu fisik gabungan 2-12!");
-
-      const outcome = compute2D6Outcome(roll, target);
-      alert(`🎲 LOG REGISTERED!\n\n${source} melakukan ${action}\nHasil Dadu: ${roll} vs Target: ${target}\nStatus: ${outcome.text}`);
+    let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+      mode: "welcome", 
+      activeSetupTab: "peta",
+      activeMainView: "M",
       
-      document.getElementById("ssRoll").value = "";
+      charCarouselIdx: 0,
+      monsterCarouselIdx: 0,
+      activeMapId: "map_default",
+      
+      data: {
+        maps: [],        
+        characters: [],  
+        items: [],     
+        monsters: []     
+      },
+      tokenPositions: {} 
     };
 
-    navigate();
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      renderApp();
+    }
+
+    function renderApp() {
+      const app = document.getElementById("app");
+      if (state.mode === "welcome") {
+        renderWelcomeScreen(app);
+      } else if (state.mode === "setup") {
+        renderSetupScreen(app);
+      } else {
+        renderMainGameplayScreen(app);
+      }
+    }
+
+    function renderWelcomeScreen(app) {
+      app.innerHTML = `
+        <div class="header-title">ARKHAM DOSSIER</div>
+        <div class="header-subtitle">CALL OF CTHULHU · SYSTEM V5</div>
+        
+        <div class="enigma-story-title">
+          🔮 GAMES STORY OF ENIGMA 🔮
+        </div>
+
+        <div class="menu-utama-container">
+          <button class="btn-utama" onclick="goToSetupManual()">✍️ BUAT STORY BARU</button>
+          <hr style="border: none; border-top: 1px dashed #2d2a22; margin: 10px 0;">
+          <button class="btn-secondary" onclick="loadAndEnterDemoDirectly()">⚡ MENCOBA DEMO INSTAN</button>
+        </div>
+      `;
+    }
+
+    function goToSetupManual() {
+      state.mode = "setup";
+      saveState();
+    }
+
+    function loadAndEnterDemoDirectly() {
+      const m1_id = "map_arkham_gudang";
+      const m2_id = "map_arkham_hutan";
+
+      state.data = {
+        maps: [
+          { id: m1_id, name: "Gudang Tua Dermaga (Map A)", url: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=600" },
+          { id: m2_id, name: "Hutan Ritual Terlarang (Map B)", url: "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=600" }
+        ],
+        characters: [
+          { id: "c_p1", name: "Harvey Walters", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150", currentMapId: m1_id, isDead:false },
+          { id: "c_p2", name: "Jenny Barnes", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150", currentMapId: m1_id, isDead:false },
+          { id: "c_p3", name: "Prof. Armitage", image: "https://images.unsplash.com/photo-1628157582853-a796fa650a6a?q=80&w=150", currentMapId: m2_id, isDead:false }
+        ],
+        items: [],
+        monsters: [
+          { id: "m_cult", kind: "monster", name: "Dark Young", image: "https://images.unsplash.com/photo-1601987177651-8edfe6c20009?q=80&w=150", currentMapId: m2_id, isDead:false, isSpawned: true },
+          { id: "m_npc_silas", kind: "npc", name: "Silas Marsh", image: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=150", currentMapId: m1_id, isDead:false, isSpawned: true }
+        ]
+      };
+
+      state.activeMapId = m1_id;
+      state.tokenPositions = {
+        [m1_id]: { "c_p1": { x: 20, y: 30 }, "c_p2": { x: 80, y: 30 }, "m_npc_silas": { x: 140, y: 120 } },
+        [m2_id]: { "c_p3": { x: 40, y: 50 }, "m_cult": { x: 200, y: 150 } }
+      };
+      
+      state.mode = "main"; 
+      saveState();
+    }
+
+    function renderSetupScreen(app) {
+      app.innerHTML = `
+        <div class="header-title" style="font-size:1.4rem; padding-top:15px;">MANAJEMEN KAMPANYE</div>
+        
+        <div class="tab-container">
+          <div class="tab-nav ${state.activeSetupTab=='peta'?'active':''}" onclick="setSetupTab('peta')">Peta Gambar</div>
+          <div class="tab-nav ${state.activeSetupTab=='karakter'?'active':''}" onclick="setSetupTab('karakter')">Karakter</div>
+          <div class="tab-nav ${state.activeSetupTab=='items'?'active':''}" onclick="setSetupTab('items')">Item Game</div>
+          <div class="tab-nav ${state.activeSetupTab=='monsters'?'active':''}" onclick="setSetupTab('monsters')">M/N/V</div>
+        </div>
+        
+        <div class="content-panel">
+          ${renderSetupTabContent()}
+        </div>
+        
+        <button class="btn-start-play" onclick="enterGameplayMode()">Mulai Main ▶</button>
+      `;
+    }
+
+    function renderSetupTabContent() {
+      const d = state.data;
+      if (state.activeSetupTab === 'peta') {
+        return `
+          <button class="btn-gold-outline" onclick="addMapPrompt()">+ Tambah Lokasi Peta Baru</button>
+          ${d.maps.length === 0 ? '<p style="color:#555;">Belum ada peta terdaftar.</p>' : 
+            d.maps.map((m,i)=>`
+              <div class="box-card">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span>📍 <strong>${m.name}</strong></span>
+                  <button onclick="deleteData('maps',${i})" style="color:#ff5555; background:transparent; border:none; cursor:pointer;">Hapus</button>
+                </div>
+              </div>
+            `).join('')
+          }
+        `;
+      }
+      
+      if (state.activeSetupTab === 'karakter') {
+        return `
+          <button class="btn-gold-outline" onclick="showNewCharacterModal()">+ Daftarkan Investigator Baru</button>
+          <div id="characterModalArea"></div>
+          ${d.characters.length === 0 ? '<p style="color:#555;">Belum ada investigator.</p>' : 
+            d.characters.map((c, i) => `<div class="box-card" style="display:flex; justify-content:space-between;"><strong>${c.name}</strong><button onclick="deleteData('characters',${i})" style="color:#ff5555; background:transparent; border:none; cursor:pointer;">Hapus</button></div>`).join('')
+          }
+        `;
+      }
+
+      if (state.activeSetupTab === 'items') {
+        return `
+          <button class="btn-gold-outline" onclick="showNewItemModal()">+ Tambah Item</button>
+          <div id="itemModalArea"></div>
+          ${d.items.length === 0 ? '<p style="color:#555;">Belum ada item.</p>' : 
+            d.items.map((it, i) => `<div class="box-card">📦 <strong>${it.name}</strong></div>`).join('')
+          }
+        `;
+      }
+
+      if (state.activeSetupTab === 'monsters') {
+        return `
+          <button class="btn-gold-outline" onclick="showNewMonsterModal()">+ Tambah Entry M/N/V</button>
+          <div id="monsterModalArea"></div>
+          ${d.monsters.length === 0 ? '<p style="color:#555;">Belum ada entry.</p>' : 
+            d.monsters.map((m, i) => `<div class="box-card">💀 [${m.kind.toUpperCase()}] <strong>${m.name}</strong></div>`).join('')
+          }
+        `;
+      }
+    }
+
+    window.setSetupTab = (t) => { state.activeSetupTab = t; saveState(); };
+    
+    window.addMapPrompt = () => {
+      const name = prompt("Masukkan nama lokasi/peta:");
+      if(!name) return;
+      const url = prompt("Masukkan URL Gambar Peta:");
+      const id = "map_" + Date.now();
+      state.data.maps.push({ id, name, url: url || "" });
+      if(!state.activeMapId || state.activeMapId === "map_default") state.activeMapId = id;
+      saveState();
+    };
+
+    window.deleteData = (field, idx) => { state.data[field].splice(idx,1); saveState(); };
+
+    window.showNewCharacterModal = () => {
+      document.getElementById('characterModalArea').innerHTML = `
+        <div class="box-card" style="border-color:#cca54a;">
+          <div class="form-group"><label>NAMA KARAKTER</label><input type="text" id="cName" class="input-field" /></div>
+          <div class="form-group"><label>URL FOTO TOKEN</label><input type="text" id="cImg" class="input-field" /></div>
+          <button class="bar-btn" onclick="saveFormCharacter()">Simpan</button>
+        </div>`;
+    };
+
+    window.saveFormCharacter = () => {
+      const name = document.getElementById('cName').value.trim();
+      if(!name) return;
+      const id = "c_" + Date.now();
+      const defaultMapId = state.data.maps[0] ? state.data.maps[0].id : "map_default";
+
+      state.data.characters.push({
+        id, name,
+        image: document.getElementById('cImg').value.trim(),
+        currentMapId: defaultMapId,
+        isDead: false
+      });
+      saveState();
+    };
+
+    window.showNewMonsterModal = () => {
+      document.getElementById('monsterModalArea').innerHTML = `
+        <div class="box-card" style="border-color:#cca54a;">
+          <div class="form-group"><label>KIND</label><select id="mKind" class="input-field"><option value="monster">Monster</option><option value="npc">NPC</option><option value="villain">Villain</option></select></div>
+          <div class="form-group"><label>NAMA ENTRY</label><input type="text" id="mName" class="input-field" /></div>
+          <div class="form-group"><label>URL FOTO TOKEN</label><input type="text" id="mImg" class="input-field" /></div>
+          <button class="bar-btn" onclick="saveFormMonster()">Simpan</button>
+        </div>`;
+    };
+    window.saveFormMonster = () => {
+      const name = document.getElementById('mName').value.trim();
+      if(!name) return;
+      const defaultMapId = state.data.maps[0] ? state.data.maps[0].id : "map_default";
+      state.data.monsters.push({
+        id: "m_" + Date.now(),
+        kind: document.getElementById('mKind').value,
+        name,
+        image: document.getElementById('mImg').value.trim(),
+        currentMapId: defaultMapId, 
+        isDead: false,
+        isSpawned: false 
+      });
+      saveState();
+    };
+
+    window.enterGameplayMode = () => {
+      if(state.data.maps.length === 0) return alert("Daftarkan minimal satu peta gambar!");
+      if(state.data.characters.length === 0) return alert("Daftarkan minimal satu investigator!");
+      state.mode = "main";
+      saveState();
+    };
+
+    // --- SCREEN 3: MAIN GAMEPLAY SCREEN ---
+    function renderMainGameplayScreen(app) {
+      app.innerHTML = `
+        <div class="main-game-screen">
+          <div class="sidebar-menu">
+            <button class="menu-btn ${state.activeMainView==='M'?'active':''}" onclick="setMainView('M')">Peta</button>
+            <button class="menu-btn ${state.activeMainView==='C'?'active':''}" onclick="setMainView('C')">Krktr</button>
+            <button class="menu-btn ${state.activeMainView==='N'?'active':''}" onclick="setMainView('N')">N</button>
+            <button onclick="exitToWelcome()" style="margin-top:auto; font-size:0.55rem; background:#aa3333; color:#fff; border:none; width:38px; height:36px; border-radius:4px; cursor:pointer;">KELUAR</button>
+          </div>
+          
+          <div class="workspace">
+            ${renderActiveWorkspaceView()}
+          </div>
+        </div>
+      `;
+      if(state.activeMainView === 'M') initDragAndDropEngine();
+    }
+
+    function renderActiveWorkspaceView() {
+      const d = state.data;
+      
+      if (state.activeMainView === 'M') {
+        const currentMap = d.maps.find(m => m.id === state.activeMapId) || d.maps[0] || { name: "Tanpa Peta", url: "", id: "map_default" };
+        const activeInvestigators = d.characters.filter(c => c.currentMapId === currentMap.id);
+        const activeMonsters = d.monsters.filter(m => m.isSpawned && m.currentMapId === currentMap.id);
+
+        return `
+          <!-- MAPS SWITCHER BERBENTUK TAB BUKAN DROPDOWN -->
+          <div style="display:flex; gap:5px; margin-bottom:10px; overflow-x:auto; padding-bottom:5px;">
+            ${d.maps.map(m => `
+              <button class="bar-btn" style="background: ${m.id === currentMap.id ? '#cca54a' : '#1c1c19'}; color: ${m.id === currentMap.id ? '#0c0c0b' : '#cca54a'}; border: 1px solid #cca54a;" onclick="changeActiveMapGM('${m.id}')">
+                📍 ${m.name}
+              </button>
+            `).join('')}
+          </div>
+
+          <div style="display:flex; gap:5px; margin-bottom:10px;">
+            <button class="bar-btn" onclick="toggleMovementPanel('char')">⇄ Pindahkan Investigator</button>
+            <button class="bar-btn" style="background:#555; color:#fff;" onclick="toggleMovementPanel('monster')">⇄ Pindahkan N/M/V</button>
+          </div>
+
+          <div id="panelMoveChar" class="movement-panel">
+            <h4 style="font-size:0.75rem; color:#cca54a; margin-bottom:5px;">PILIH SIAPA YANG PINDAH MAP:</h4>
+            <div class="checkbox-row">
+              <input type="checkbox" id="moveAllChar" onchange="toggleSelectAllChar(this.checked)"/> 
+              <label for="moveAllChar" style="color:#ffaa00; font-weight:bold;">[ Semua Pergi Bersama ]</label>
+            </div>
+            ${d.characters.map(c => `
+              <div class="checkbox-row">
+                <input type="checkbox" class="char-move-cb" value="${c.id}" id="cb_${c.id}"/> 
+                <label for="cb_${c.id}">${c.name}</label>
+              </div>
+            `).join('')}
+            <div style="margin-top:8px;">
+              <select id="targetMapChar" class="bar-select">
+                ${d.maps.map(m => `<option value="${m.id}">Ke: ${m.name}</option>`).join('')}
+              </select>
+              <button class="bar-btn" style="padding:4px 8px; margin-left:5px;" onclick="executePartySplit('char')">Pindahkan</button>
+            </div>
+          </div>
+
+          <div id="panelMoveMonster" class="movement-panel" style="border-color:#ff5555;">
+            <h4 style="font-size:0.75rem; color:#ff5555; margin-bottom:5px;">PILIH N/M/V YANG PINDAH MAP:</h4>
+            ${d.monsters.filter(m => m.isSpawned).length === 0 ? '<p style="font-size:0.7rem; color:#666;">Tidak ada token N/M/V yang aktif.</p>' : 
+              d.monsters.filter(m => m.isSpawned).map(m => `
+                <div class="checkbox-row">
+                  <input type="checkbox" class="monster-move-cb" value="${m.id}" id="cb_${m.id}"/> 
+                  <label for="cb_${m.id}">[${m.kind[0].toUpperCase()}] ${m.name}</label>
+                </div>
+              `).join('')
+            }
+            <div style="margin-top:8px;">
+              <select id="targetMapMonster" class="bar-select">
+                ${d.maps.map(m => `<option value="${m.id}">Ke: ${m.name}</option>`).join('')}
+              </select>
+              <button class="bar-btn" style="padding:4px 8px; margin-left:5px; background:#ff5555; color:#fff;" onclick="executePartySplit('monster')">Pindahkan</button>
+            </div>
+          </div>
+
+          <!-- CONTAINER PETA BERSIH TOTAL -->
+          <div class="board-container" id="boardMap" style="background-image: url('${currentMap.url}');">
+            ${activeInvestigators.map((c) => {
+              const pos = (state.tokenPositions[currentMap.id] && state.tokenPositions[currentMap.id][c.id]) || { x: 20, y: 30 };
+              return `
+                <div class="token-item" style="top:${pos.y}px; left:${pos.x}px;" id="${c.id}">
+                  ${c.image ? `<img src="${c.image}" draggable="false" />` : ''}
+                </div>
+              `;
+            }).join('')}
+
+            ${activeMonsters.map((m) => {
+              const pos = (state.tokenPositions[currentMap.id] && state.tokenPositions[currentMap.id][m.id]) || { x: 150, y: 50 };
+              return `
+                <div class="token-item" style="top:${pos.y}px; left:${pos.x}px;" id="${m.id}">
+                  ${m.image ? `<img src="${m.image}" draggable="false" />` : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      }
+
+      if (state.activeMainView === 'C') {
+        if(d.characters.length === 0) return `<p>Tidak ada karakter.</p>`;
+        const c = d.characters[state.charCarouselIdx];
+        const cMapName = d.maps.find(m => m.id === c.currentMapId)?.name || "Lokasi tidak diketahui";
+        return `
+          <div class="panel-header"><span>Investigator Profiles</span></div>
+          <div class="carousel-wrapper">
+            <button class="carousel-btn" onclick="rotateCarousel('char', -1)">‹</button>
+            <span class="carousel-info-text">Ganti Karakter</span>
+            <button class="carousel-btn" onclick="rotateCarousel('char', 1)">›</button>
+          </div>
+          <div class="box-card">
+            <div class="char-profile-layout">
+              <div class="char-photo-box">${c.image ? `<img src="${c.image}"/>` : `👤`}</div>
+              <div>
+                <div class="char-name-display">${c.name}</div>
+                <div style="font-size:0.75rem; color:#cca54a; background:#221f18; padding:3px 6px; display:inline-block; border-radius:3px;">📍 Map: <strong>${cMapName}</strong></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (state.activeMainView === 'N') {
+        if(d.monsters.length === 0) return `<p>Tidak ada entitas.</p>`;
+        const m = d.monsters[state.monsterCarouselIdx];
+        const mMapName = d.maps.find(m => m.id === m.currentMapId)?.name || "Lokasi tidak diketahui";
+        return `
+          <div class="panel-header"><span>Daftar Menu N</span></div>
+          <div class="carousel-wrapper">
+            <button class="carousel-btn" onclick="rotateCarousel('monster', -1)">‹</button>
+            <span class="carousel-info-text">Tipe: ${m.kind.toUpperCase()}</span>
+            <button class="carousel-btn" onclick="rotateCarousel('monster', 1)">›</button>
+          </div>
+          <div class="box-card">
+            <h3 style="color:#ff5555;">💀 ${m.name}</h3>
+            <div style="font-size:0.75rem; color:#fff; margin:5px 0 10px 0;">📍 Terdaftar di Map: <strong>${mMapName}</strong></div>
+            <div style="background:#1c1a15; padding:10px; border:1px solid #cca54a; text-align:center;">
+              ${m.isSpawned ? 
+                `<button class="bar-btn" style="background:#aa3333; color:#fff;" onclick="toggleSpawnToken('${m.id}', false)">Tarik Dari Map</button>` : 
+                `<button class="bar-btn" style="background:#33aa44; color:#fff;" onclick="toggleSpawnToken('${m.id}', true)">⚡ Spawn Token Ke Map</button>`
+              }
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function initDragAndDropEngine() {
+      setTimeout(() => {
+        const tokens = document.querySelectorAll('.token-item');
+        const board = document.getElementById('boardMap');
+        if(!board) return;
+
+        tokens.forEach(token => {
+          token.onmousedown = function(event) {
+            event.preventDefault();
+            let shiftX = event.clientX - token.getBoundingClientRect().left;
+            let shiftY = event.clientY - token.getBoundingClientRect().top;
+
+            function moveAt(pageX, pageY) {
+              let boardRect = board.getBoundingClientRect();
+              let newX = pageX - boardRect.left - shiftX;
+              let newY = pageY - boardRect.top - shiftY;
+
+              newX = Math.max(0, Math.min(newX, boardRect.width - token.offsetWidth));
+              newY = Math.max(0, Math.min(newY, boardRect.height - token.offsetHeight));
+
+              token.style.left = newX + 'px';
+              token.style.top = newY + 'px';
+
+              if (!state.tokenPositions[state.activeMapId]) state.tokenPositions[state.activeMapId] = {};
+              state.tokenPositions[state.activeMapId][token.id] = { x: newX, y: newY };
+            }
+
+            function onMouseMove(event) { moveAt(event.clientX, event.clientY); }
+            document.addEventListener('mousemove', onMouseMove);
+
+            document.onmouseup = function() {
+              document.removeEventListener('mousemove', onMouseMove);
+              document.onmouseup = null;
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            };
+          };
+        });
+      }, 100);
+    }
+
+    window.toggleMovementPanel = (type) => {
+      const charPanel = document.getElementById('panelMoveChar');
+      const monsterPanel = document.getElementById('panelMoveMonster');
+      if(type === 'char') {
+        charPanel.style.display = charPanel.style.display === 'block' ? 'none' : 'block';
+        monsterPanel.style.display = 'none';
+      } else {
+        monsterPanel.style.display = monsterPanel.style.display === 'block' ? 'none' : 'block';
+        charPanel.style.display = 'none';
+      }
+    };
+
+    window.toggleSelectAllChar = (isTrue) => {
+      const checkboxes = document.querySelectorAll('.char-move-cb');
+      checkboxes.forEach(cb => cb.checked = isTrue);
+    };
+
+    window.executePartySplit = (type) => {
+      if(type === 'char') {
+        const targetMap = document.getElementById('targetMapChar').value;
+        const checkboxes = document.querySelectorAll('.char-move-cb');
+        let movedCount = 0;
+
+        checkboxes.forEach(cb => {
+          if(cb.checked) {
+            const charObj = state.data.characters.find(c => c.id === cb.value);
+            if(charObj) {
+              charObj.currentMapId = targetMap;
+              if(!state.tokenPositions[targetMap]) state.tokenPositions[targetMap] = {};
+              if(!state.tokenPositions[targetMap][charObj.id]) state.tokenPositions[targetMap][charObj.id] = { x: 30 + (movedCount*15), y: 40 };
+              movedCount++;
+            }
+          }
+        });
+      } else {
+        const targetMap = document.getElementById('targetMapMonster').value;
+        const checkboxes = document.querySelectorAll('.monster-move-cb');
+        let movedCount = 0;
+
+        checkboxes.forEach(cb => {
+          if(cb.checked) {
+            const monObj = state.data.monsters.find(m => m.id === cb.value);
+            if(monObj) {
+              monObj.currentMapId = targetMap;
+              if(!state.tokenPositions[targetMap]) state.tokenPositions[targetMap] = {};
+              if(!state.tokenPositions[targetMap][monObj.id]) state.tokenPositions[targetMap][monObj.id] = { x: 150, y: 60 + (movedCount*15) };
+              movedCount++;
+            }
+          }
+        });
+      }
+      saveState();
+    };
+
+    window.changeActiveMapGM = (id) => { state.activeMapId = id; saveState(); };
+    window.setMainView = (v) => { state.activeMainView = v; renderApp(); };
+    window.exitToWelcome = () => { state.mode = "welcome"; saveState(); };
+
+    window.toggleSpawnToken = (id, targetState) => {
+      const m = state.data.monsters.find(x => x.id === id);
+      if(m) {
+        m.isSpawned = targetState;
+        if(targetState) {
+          if(!state.tokenPositions[m.currentMapId]) state.tokenPositions[m.currentMapId] = {};
+          if(!state.tokenPositions[m.currentMapId][id]) state.tokenPositions[m.currentMapId][id] = { x: 130, y: 100 };
+        }
+        saveState();
+      }
+    };
+
+    window.rotateCarousel = (type, direction) => {
+      const d = state.data;
+      if (type === 'char' && d.characters.length) state.charCarouselIdx = (state.charCarouselIdx + direction + d.characters.length) % d.characters.length;
+      if (type === 'monster' && d.monsters.length) state.monsterCarouselIdx = (state.monsterCarouselIdx + direction + d.monsters.length) % d.monsters.length;
+      saveState();
+    };
+
+    renderApp();
   </script>
 </body>
 </html>
