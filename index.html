@@ -3,28 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>STORY ENIGMA - Engine TTRPG Modular</title>
+  <title>STORY ENIGMA - Full Feature Engine</title>
   <style>
-    /* RESET & GLOBAL STYLES */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: #0a0a0a; color: #e0e0e0; font-family: Arial, sans-serif; overflow-x: hidden; }
-    
-    /* APPS CONTROLLER LAYOUT */
     #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; }
     
     /* OPENING SCREEN */
-    .opening-container { max-width: 500px; margin: 80px auto padding: 20px; text-align: center; }
+    .opening-container { max-width: 500px; margin: 40px auto; padding: 20px; text-align: center; }
     .title { font-size: 2.5rem; color: #ffd700; letter-spacing: 2px; margin-bottom: 5px; }
-    .subtitle { font-size: 1rem; color: #888; margin-bottom: 40px; }
+    .subtitle { font-size: 1rem; color: #888; margin-bottom: 30px; }
     .section { margin-bottom: 30px; }
     .list-container { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
     .story-button { padding: 15px; background: #1a2e1a; border: 1px solid #2d5a2d; border-radius: 6px; color: #fff; text-align: left; font-size: 1rem; cursor: pointer; display: flex; justify-content: space-between; }
-    .main-action-btn { width: 100%; padding: 15px; background: #2d5a2d; border: none; border-radius: 6px; color: #fff; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
-    .form-box { background: #1c1c1c; padding: 20px; border-radius: 8px; border: 1px solid #333; display: flex; flex-direction: column; gap: 15px; }
-    .input-text { padding: 12px; background: #111; border: 1px solid #444; border-radius: 4px; color: #fff; font-size: 1rem; }
-    .form-actions { display: flex; gap: 10px; }
-    .submit-btn { flex: 1; padding: 10px; background: #2d5a2d; border: none; border-radius: 4px; color: #fff; font-weight: bold; cursor: pointer; }
-    .cancel-btn { padding: 10px 15px; background: #444; border: none; border-radius: 4px; color: #fff; cursor: pointer; }
+    .main-action-btn { width: 100%; padding: 12px; background: #2d5a2d; border: none; border-radius: 6px; color: #fff; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
+    .form-box { background: #1c1c1c; padding: 20px; border-radius: 8px; border: 1px solid #333; display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; text-align: left; }
+    .input-text { padding: 10px; background: #111; border: 1px solid #444; border-radius: 4px; color: #fff; font-size: 0.9rem; width: 100%; }
+    .input-row { display: flex; gap: 10px; }
 
     /* SETUP MODE (PORTRAIT) */
     .setup-container { display: flex; flex-direction: column; height: 100vh; padding: 10px; }
@@ -34,49 +29,40 @@
     .tab-btn { flex: 1; padding: 10px; background: #1e1e1e; border: 1px solid #333; color: #aaa; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
     .tab-btn.active { background: #2d5a2d; color: #fff; border: 1px solid #55a855; }
     .setup-content { flex: 1; overflow-y: auto; padding-bottom: 80px; }
-    .add-btn { background: #2d5a2d; color: #fff; border: none; padding: 10px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold; margin-bottom: 15px; }
-    .setup-card { background: #1c1c1c; border: 1px solid #333; padding: 15px; border-radius: 6px; margin-bottom: 10px; }
+    .setup-card { background: #1c1c1c; border: 1px solid #333; padding: 12px; border-radius: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .del-btn { background: #aa3333; border: none; color: #fff; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
     
-    /* FIXED FOOTER SETUP */
+    /* FOOTER */
     .footer-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #1a1a1a; border-top: 1px solid #333; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; z-index: 100; }
-    .save-btn { background: #1a2e1a; border: 1px solid #2d5a2d; color: #55a855; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
     .start-btn { background: #2d5a2d; border: none; color: #fff; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1rem; }
 
-    /* MAIN MODE (LANDSCAPE VIA CSS FOR MOBILE) */
+    /* MAIN MODE */
     .main-container { display: flex; width: 100vw; height: 100vh; overflow: hidden; position: relative; }
     @media screen and (max-width: 768px) and (orientation: portrait) {
       .main-container { transform: rotate(90deg); transform-origin: bottom left; position: absolute; top: -100vw; left: 0; width: 100vh; height: 100vw; }
     }
     .map-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; display: flex; justify-content: center; align-items: center; background: #111; }
-    .map-layer.frozen { pointer-events: none; filter: brightness(0.3) blur(2px); }
+    .map-layer.frozen { pointer-events: none; filter: brightness(0.2) blur(3px); }
     
-    /* NAVIGATION M C S I N */
-    .fixed-menu-btn { position: absolute; z-index: 10; width: 34px; height: 34px; background: #1c1c1c; border: 1px solid #ffd700; color: #ffd700; font-weight: bold; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+    .fixed-menu-btn { position: absolute; z-index: 10; width: 34px; height: 34px; background: #1c1c1c; border: 1px solid #ffd700; color: #ffd700; font-weight: bold; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .fixed-menu-btn.active { background: #ffd700; color: #1c1c1c; }
-    .popover-panel { position: absolute; top: 10px; left: 60px; right: 10px; bottom: 75px; background: rgba(15, 15, 15, 0.96); border: 2px solid #ffd700; border-radius: 8px; z-index: 20; padding: 15px; overflow-y: auto; }
+    .popover-panel { position: absolute; top: 10px; left: 60px; right: 10px; bottom: 75px; background: rgba(15, 15, 15, 0.98); border: 2px solid #ffd700; border-radius: 8px; z-index: 20; padding: 15px; overflow-y: auto; }
     .popover-header { display: flex; justify-content: space-between; border-bottom: 1px solid #ffd700; padding-bottom: 5px; margin-bottom: 15px; }
     
-    /* CLASSIC COC GRADIENT STAT CARD (POIN E.1) */
     .stat-card-grid { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
-    .coc-stat-box { background: linear-gradient(135deg, #0f2613 0%, #071409 100%); border: 1px solid #2d5a2d; border-radius: 6px; padding: 8px; textAlign: center; min-width: 80px; text-align: center; }
-    .coc-label { display: block; font-size: 0.65rem; color: #8cd98c; letter-spacing: 1px; margin-bottom: 4px; }
+    .coc-stat-box { background: linear-gradient(135deg, #0f2613 0%, #071409 100%); border: 1px solid #2d5a2d; border-radius: 6px; padding: 8px; min-width: 80px; text-align: center; }
+    .coc-label { display: block; font-size: 0.65rem; color: #8cd98c; margin-bottom: 4px; }
     .coc-num-row { display: flex; justify-content: space-between; align-items: center; }
     .coc-btn { background: #1c3d20; border: none; color: #fff; width: 18px; height: 18px; border-radius: 3px; cursor: pointer; font-weight: bold; }
     .coc-number { font-size: 1.3rem; font-weight: bold; color: #fff; }
-    .coc-max { display: block; font-size: 0.6rem; color: #666; margin-top: 3px; }
 
-    /* BAR SS (BOTTOM BAR) */
+    /* BAR SS & LOGS */
     .bar-ss { position: absolute; bottom: 0; left: 0; right: 0; height: 65px; background: #141414; border-top: 2px solid #333; z-index: 15; display: flex; align-items: center; padding: 0 10px; gap: 8px; overflow-x: auto; }
     .ss-select, .ss-input { background: #222; border: 1px solid #444; color: #fff; padding: 6px; border-radius: 4px; font-size: 0.8rem; }
     .ss-input-num { width: 50px; text-align: center; font-weight: bold; color: #ffd700; }
     .ss-btn { background: #2d5a2d; border: none; color: #fff; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-
-    /* ROLL NOTIFICATION CARD (DISCORD STYLE POIN E.2) */
-    .roll-card-log { max-width: 400px; background: #141414; border: 1px solid #333; border-radius: 6px; padding: 12px; font-family: monospace; margin-top: 10px; }
-    .rc-header { display: flex; justify-content: space-between; font-size: 0.75rem; color: #888; margin-bottom: 5px; }
-    .rc-title { font-size: 1.1rem; font-weight: bold; color: #ffd700; margin-bottom: 5px; }
-    .rc-banner { padding: 6px; border-radius: 4px; text-align: center; font-weight: bold; color: #fff; margin-bottom: 8px; }
-    .rc-body { display: flex; justify-content: space-around; font-size: 0.85rem; border-top: 1px solid #222; paddingTop: 5px; }
+    .log-panel { margin-top: 15px; background: #111; padding: 10px; border-radius: 6px; max-height: 200px; overflow-y: auto; }
+    .log-item { font-family: monospace; font-size: 0.8rem; border-bottom: 1px solid #222; padding: 4px 0; }
   </style>
 </head>
 <body>
@@ -84,59 +70,27 @@
   <div id="app"></div>
 
   <script>
-    // ENGINE UTAMA (SIMULASI STATE DAN WINDOW STORAGE PERSISTENCE)
-    const STORAGE_KEY = "STORY_ENIGMA_LOCAL";
+    const STORAGE_KEY = "STORY_ENIGMA_LOCAL_V2";
     let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || { savedGames: [], currentStoryId: null };
 
-    // Default template data game jika kosong
-    const createBlankData = () => ({
-      maps: [{ id: 1, name: "Gedung Tua Tua Keladi" }],
-      characters: [
-        { id: "c1", name: "Prof. Handoko", description: "Arkeolog senior yang penasaran.", stats: { hp: { cur: 10, max: 10 }, sanity: 8, mp: 6, luck: 7 }, isDead: false, weapons: [{ id: "w1", name: "Senter & Belati", type: "melee", durability: { cur: 5, max: 5 } }] }
-      ],
-      items: [{ id: "i1", name: "Kitab Al-Azif", type: "buku", description: "Buku kuno pelapis mantra kuno kuno." }],
-      monsters: [
-        { id: "m1", name: "Cthulhu Spawn", kind: "monster", description: "Makhluk berlendir tentakel jahat.", hp: { cur: 15, max: 15 }, attacks: [{ id: "a1", name: "Cengkeraman Maut", value: 8, isArea: false }], isDead: false }
-      ],
-      logs: []
-    });
+    // Membuat data game baru yang benar-benar bersih/kosong
+    const createBlankData = () => ({ maps: [], characters: [], items: [], monsters: [], logs: [] });
 
-    function saveState() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
+    function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    function getActiveGame() { return state.savedGames.find(g => g.id === state.currentStoryId); }
 
-    function getActiveGame() {
-      return state.savedGames.find(g => g.id === state.currentStoryId);
-    }
-
-    // DISCORD DISPATCH ACTION OUTCOME COMPUTATION (2D6 ROLL UNDER)
-    function compute2D6Outcome(roll, target) {
-      if (roll === 2) return { text: "SUKSES KRITIS", color: "#00ffff" };
-      if (roll === 12) return { text: "GAGAL TOTAL", color: "#ff0000" };
-      if (roll > target) return { text: "GAGAL", color: "#aa3333" };
-      
-      if (roll <= Math.floor(target * 0.5)) return { text: "SUKSES EKSTREM", color: "#ffd700" };
-      if (roll <= Math.floor(target * 0.75)) return { text: "SUKSES SULIT", color: "#8cd98c" };
-      return { text: "BERHASIL", color: "#2d5a2d" };
-    }
-
-    // RENDER CONTROLLER (VANILLA CORE VIRTUAL ROUTER)
     const appEl = document.getElementById("app");
 
     function navigate() {
-      if (!state.currentStoryId) {
-        renderOpening();
-      } else {
+      if (!state.currentStoryId) { renderOpening(); } 
+      else {
         const game = getActiveGame();
-        if (game.mode === "setup") {
-          renderSetupMode(game);
-        } else {
-          renderMainMode(game);
-        }
+        if (game.mode === "setup") { renderSetupMode(game); } 
+        else { renderMainMode(game); }
       }
     }
 
-    // 1. RENDER HALAMAN PEMBUKAAN
+    // SCREEN 1: OPENING
     function renderOpening() {
       let listHtml = state.savedGames.map(game => `
         <button class="story-button" onclick="selectStory('${game.id}')">
@@ -148,65 +102,48 @@
         <div class="opening-container">
           <h1 class="title">STORY ENIGMA</h1>
           <p class="subtitle">Aplikasi Engine TTRPG Modular</p>
-          
-          ${state.savedGames.length > 0 ? `
-            <div class="section">
-              <h4 style="text-align:left; color:#aaa; margin-bottom:5px;">Lanjutkan Game Terakhir:</h4>
-              <div class="list-container">${listHtml}</div>
-            </div>
-          ` : ''}
-
           <div class="section">
             <div class="form-box">
-              <h3 style="color:#ffd700;">Tambah Story Game Baru</h3>
-              <input type="text" id="newStoryTitle" class="input-text" placeholder="Masukkan Judul Story Baru..." />
-              <button class="main-action-btn" onclick="createNewStory()">Buat Game & Mulai</button>
+              <h3 style="color:#ffd700;">Buat Skenario / Judul Baru</h3>
+              <input type="text" id="newStoryTitle" class="input-text" placeholder="Masukkan Nama Skenario..." />
+              <button class="main-action-btn" onclick="createNewStory()">Buat & Masuk Setup</button>
             </div>
           </div>
+          ${state.savedGames.length > 0 ? `<div class="section"><h4 style="text-align:left; color:#aaa; margin-bottom:5px;">Lanjutkan Skenario:</h4><div class="list-container">${listHtml}</div></div>` : ''}
         </div>
       `;
     }
 
     window.createNewStory = () => {
       const txt = document.getElementById("newStoryTitle").value.trim();
-      if (!txt) return alert("Judul tidak boleh kosong!");
+      if (!txt) return alert("Judul wajib diisi!");
       const newGame = { id: "g_" + Date.now(), title: txt, mode: "setup", data: createBlankData() };
       state.savedGames.push(newGame);
       state.currentStoryId = newGame.id;
-      saveState();
-      navigate();
+      saveState(); navigate();
     };
 
-    window.selectStory = (id) => {
-      state.currentStoryId = id;
-      saveState();
-      navigate();
-    };
+    window.selectStory = (id) => { state.currentStoryId = id; saveState(); navigate(); };
 
-    // 2. RENDER SETUP MODE (PORTRAIT)
+    // SCREEN 2: SETUP MODE (BISA TAMBAH SEMUA KOMPONEN SECARA BEBAS)
     let curSetupTab = "peta";
     function renderSetupMode(game) {
       appEl.innerHTML = `
         <div class="setup-container">
           <div class="header-bar">
             <button class="back-btn" onclick="exitToOpening()">⬅ Keluar</button>
-            <h2>${game.title} <span style="font-size:0.75rem; color:#ffd700; border:1px solid #ffd700; padding:2px; border-radius:3px;">SETUP</span></h2>
+            <h2>${game.title}</h2>
           </div>
-
           <div class="tab-bar">
-            <button class="tab-btn ${curSetupTab==='peta'?'active':''}" onclick="setSetupTab('peta')">PETA</button>
-            <button class="tab-btn ${curSetupTab==='karakter'?'active':''}" onclick="setSetupTab('karakter')">KARAKTER</button>
-            <button class="tab-btn ${curSetupTab==='item'?'active':''}" onclick="setSetupTab('item')">ITEM</button>
-            <button class="tab-btn ${curSetupTab==='n_panel'?'active':''}" onclick="setSetupTab('n_panel')">N (ENTITAS)</button>
+            <button class="tab-btn ${curSetupTab==='peta'?'active':''}" onclick="setSetupTab('peta')">🗺️ PETA</button>
+            <button class="tab-btn ${curSetupTab==='karakter'?'active':''}" onclick="setSetupTab('karakter')">👤 INVESTIGATOR</button>
+            <button class="tab-btn ${curSetupTab==='item'?'active':''}" onclick="setSetupTab('item')">📦 ITEM</button>
+            <button class="tab-btn ${curSetupTab==='n_panel'?'active':''}" onclick="setSetupTab('n_panel')">👹 ANCAMAN / NPC</button>
           </div>
-
-          <div class="setup-content">
-            ${renderSetupTabContent(game)}
-          </div>
-
+          <div class="setup-content">${renderSetupTabContent(game)}</div>
           <div class="footer-bar">
-            <button class="save-btn" onclick="alert('💾 Data Setup Berhasil Disimpan Offline!')">TOMBOL SIMPAN &gt;_&lt;</button>
-            <button class="start-btn" onclick="changeMode('main')">Mulai Main ▶</button>
+            <span style="color:#666; font-size:0.8rem;">Fase Penyusunan</span>
+            <button class="start-btn" onclick="tryStartMain()">Mulai Mode Main ▶</button>
           </div>
         </div>
       `;
@@ -214,208 +151,233 @@
 
     function renderSetupTabContent(game) {
       if (curSetupTab === 'peta') {
+        let itemsHtml = game.data.maps.map(m => `<div class="setup-card"><span>🗺️ ${m.name}</span><button class="del-btn" onclick="deleteData('maps','${m.id}')">Hapus</button></div>`).join('');
         return `
-          <h3>Daftar Lokasi Peta</h3>
-          <div class="setup-card">🗺️ Lokasi aktif saat ini: <strong>${game.data.maps[0]?.name || "Belum ada"}</strong></div>
-          <p style="font-size:0.8rem; color:#666;">*Fase setup mengunci persiapan aset fisik sebelum rotasi landscape dimulai.</p>
+          <div class="form-box">
+            <h4>Tambah Peta / Lokasi</h4>
+            <input type="text" id="addMapName" class="input-text" placeholder="Contoh: Rumah Sakit Jiwa Lantai 1" />
+            <button class="main-action-btn" onclick="addData('maps')">+ Simpan Peta</button>
+          </div>
+          <div>${itemsHtml || '<p style="color:#666;text-align:center;">Belum ada peta. Silakan tambah di atas.</p>'}</div>
         `;
       }
       if (curSetupTab === 'karakter') {
-        return game.data.characters.map(c => `
-          <div class="setup-card">
-            <h4>👤 Investigator: ${c.name}</h4>
-            <p style="color:#aaa; font-size:0.9rem;">${c.description}</p>
+        let itemsHtml = game.data.characters.map(c => `<div class="setup-card"><div><strong>👤 ${c.name}</strong><br><small style="color:#aaa;">HP: ${c.stats.hp.max} | SAN: ${c.stats.sanity}</small></div><button class="del-btn" onclick="deleteData('characters','${c.id}')">Hapus</button></div>`).join('');
+        return `
+          <div class="form-box">
+            <h4>Tambah Investigator</h4>
+            <input type="text" id="addCharName" class="input-text" placeholder="Nama Karakter..." />
+            <div class="input-row">
+              <input type="number" id="addCharHp" class="input-text" placeholder="Max HP" value="10" />
+              <input type="number" id="addCharSan" class="input-text" placeholder="Target Sanity (2-12)" value="7" />
+            </div>
+            <button class="main-action-btn" onclick="addData('characters')">+ Simpan Karakter</button>
           </div>
-        `).join('');
+          <div>${itemsHtml || '<p style="color:#666;text-align:center;">Belum ada karakter.</p>'}</div>
+        `;
       }
       if (curSetupTab === 'item') {
-        return game.data.items.map(i => `
-          <div class="setup-card">
-            <h4>📦 [${i.type.toUpperCase()}] ${i.name}</h4>
-            <p style="color:#aaa; font-size:0.9rem;">${i.description}</p>
+        let itemsHtml = game.data.items.map(i => `<div class="setup-card"><span>📦 [${i.type.toUpperCase()}] ${i.name}</span><button class="del-btn" onclick="deleteData('items','${i.id}')">Hapus</button></div>`).join('');
+        return `
+          <div class="form-box">
+            <h4>Tambah Item / Senjata</h4>
+            <input type="text" id="addItemName" class="input-text" placeholder="Nama Item..." />
+            <select id="addItemType" class="input-text"><option value="alat">Alat Umum</option><option value="senjata">Senjata</option><option value="buku">Buku/Petunjuk</option></select>
+            <button class="main-action-btn" onclick="addData('items')">+ Simpan Item</button>
           </div>
-        `).join('');
+          <div>${itemsHtml || '<p style="color:#666;text-align:center;">Belum ada item.</p>'}</div>
+        `;
       }
       if (curSetupTab === 'n_panel') {
+        let itemsHtml = game.data.monsters.map(m => `<div class="setup-card"><span>👹 [${m.kind.toUpperCase()}] ${m.name} (HP: ${m.hp.max})</span><button class="del-btn" onclick="deleteData('monsters','${m.id}')">Hapus</button></div>`).join('');
         return `
-          <h3>Ancaman & NPC Baru (Menu N)</h3>
-          ${game.data.monsters.map(m => `
-            <div class="setup-card">
-              <span style="background:#8b0000; padding:2px 5px; border-radius:3px; font-size:0.7rem; font-weight:bold;">${m.kind.toUpperCase()}</span>
-              <strong style="margin-left:5px;">${m.name}</strong>
-              <p style="color:#888; font-size:0.85rem; margin-top:4px;">${m.description}</p>
+          <div class="form-box">
+            <h4>Tambah Monster / NPC / Villain</h4>
+            <input type="text" id="addMonName" class="input-text" placeholder="Nama Entitas..." />
+            <div class="input-row">
+              <select id="addMonKind" class="input-text"><option value="monster">Monster</option><option value="npc">NPC Netral</option><option value="villain">Villain Utama</option></select>
+              <input type="number" id="addMonHp" class="input-text" placeholder="HP" value="12" />
             </div>
-          `).join('')}
+            <button class="main-action-btn" onclick="addData('monsters')">+ Simpan Entitas</button>
+          </div>
+          <div>${itemsHtml || '<p style="color:#666;text-align:center;">Belum ada entitas bahaya.</p>'}</div>
         `;
       }
     }
 
     window.setSetupTab = (t) => { curSetupTab = t; navigate(); };
     window.exitToOpening = () => { state.currentStoryId = null; saveState(); navigate(); };
-    window.changeMode = (m) => { const g = getActiveGame(); g.mode = m; saveState(); navigate(); };
 
-    // 3. RENDER MAIN MODE (LANDSCAPE VIA CSS CONTROLLER)
-    let activeMainMenu = null; // M | C | S | I | N
+    // FUNGSI DINAMIS UNTUK TAMBAH DATA (INPUT BARU)
+    window.addData = (type) => {
+      const game = getActiveGame();
+      if (type === 'maps') {
+        const val = document.getElementById("addMapName").value.trim();
+        if(!val) return; game.data.maps.push({ id: "m_" + Date.now(), name: val });
+      } else if (type === 'characters') {
+        const name = document.getElementById("addCharName").value.trim();
+        const hp = parseInt(document.getElementById("addCharHp").value) || 10;
+        const san = parseInt(document.getElementById("addCharSan").value) || 7;
+        if(!name) return; game.data.characters.push({ id: "c_" + Date.now(), name, stats: { hp: { cur: hp, max: hp }, sanity: san, luck: 6 }, isDead: false });
+      } else if (type === 'items') {
+        const name = document.getElementById("addItemName").value.trim();
+        const t = document.getElementById("addItemType").value;
+        if(!name) return; game.data.items.push({ id: "i_" + Date.now(), name, type: t });
+      } else if (type === 'monsters') {
+        const name = document.getElementById("addMonName").value.trim();
+        const kind = document.getElementById("addMonKind").value;
+        const hp = parseInt(document.getElementById("addMonHp").value) || 10;
+        if(!name) return; game.data.monsters.push({ id: "n_" + Date.now(), name, kind, hp: { cur: hp, max: hp } });
+      }
+      saveState(); navigate();
+    };
+
+    window.deleteData = (type, id) => {
+      const game = getActiveGame();
+      game.data[type] = game.data[type].filter(item => item.id !== id);
+      saveState(); navigate();
+    };
+
+    window.tryStartMain = () => {
+      const game = getActiveGame();
+      if (game.data.maps.length === 0 || game.data.characters.length === 0) {
+        return alert("Minimal harus mengisi 1 Peta dan 1 Investigator untuk mulai bermain!");
+      }
+      game.mode = "main"; saveState(); navigate();
+    };
+
+    // SCREEN 3: MAIN MODE (LANDSCAPE PENUH)
+    let activeMainMenu = null;
+    let selectedCharIdx = 0;
+
     function renderMainMode(game) {
+      // Opsi dropdown untuk Bar SS diisi otomatis berdasarkan data yang diinput user
+      let ssOptions = game.data.characters.map(c => `<option value="${c.name}">👤 ${c.name} (Skill)</option>`).join('');
+      ssOptions += game.data.monsters.map(m => `<option value="${m.name}">👹 ${m.name} (Serangan)</option>`).join('');
+
       appEl.innerHTML = `
         <div class="main-container">
-          
-          <!-- BACKGROUND MAP LAYER (BEKU JIKA MENU AKTIF POIN 4) -->
           <div class="map-layer ${activeMainMenu ? 'frozen' : ''}">
             <div style="text-align:center;">
-              <h3 style="color:#ffd700; margin-bottom:5px;">🗺️ Peta: ${game.data.maps[0]?.name}</h3>
-              <p style="font-size:0.8rem; color:#666;">Token Investigator & Monster diletakkan di atas meja fisik Anda.</p>
+              <h2 style="color:#ffd700; margin-bottom:5px;">🗺️ AKTIF: ${game.data.maps[0]?.name}</h2>
+              <p style="font-size:0.85rem; color:#888;">Gunakan tombol navigasi M, C, S, I, N di pojok kiri untuk membuka menu.</p>
             </div>
           </div>
 
-          <!-- FIXED TACTICAL NAV LETTERS -->
+          <!-- HURUF TAKTIS M C S I N -->
           <button class="fixed-menu-btn ${activeMainMenu==='M'?'active':''}" style="left:8px; top:10px;" onclick="toggleMainMenu('M')">M</button>
           <button class="fixed-menu-btn ${activeMainMenu==='C'?'active':''}" style="left:46px; top:10px;" onclick="toggleMainMenu('C')">C</button>
           <button class="fixed-menu-btn ${activeMainMenu==='S'?'active':''}" style="left:84px; top:10px;" onclick="toggleMainMenu('S')">S</button>
           <button class="fixed-menu-btn ${activeMainMenu==='I'?'active':''}" style="left:8px; top:46px;" onclick="toggleMainMenu('I')">I</button>
           <button class="fixed-menu-btn ${activeMainMenu==='N'?'active':''}" style="left:8px; top:90px;" onclick="toggleMainMenu('N')">N</button>
 
-          <!-- TOP ACTION CONTROLLER -->
-          <div style="position:absolute; right:10px; top:10px; zIndex:30; display:flex; gap:5px;">
-            <button onclick="alert('💾 Data Sesi Utama Berhasil Disimpan Manual!')" style="background:#1a2e1a; border:1px solid #2d5a2d; color:#55a855; padding:5px; border-radius:4px; font-size:0.75rem; cursor:pointer;">SIMPAN</button>
-            <button onclick="changeMode('setup')" style="background:#aa3333; border:none; color:#fff; padding:5px; border-radius:4px; font-size:0.75rem; cursor:pointer;">KELUAR</button>
+          <div style="position:absolute; right:10px; top:10px; z-index:30;">
+            <button onclick="changeMode('setup')" style="background:#aa3333; border:none; color:#fff; padding:5px 10px; border-radius:4px; font-size:0.75rem; cursor:pointer;">⚙️ Edit Setup</button>
           </div>
 
-          <!-- POPOVER DISPLAY LAYER -->
+          <!-- POPOVER DISPLAY PANEL -->
           ${activeMainMenu ? `
             <div class="popover-panel">
               <div class="popover-header">
-                <h3 style="color:#ffd700;">MENU INTERAKTIF: ${activeMainMenu}</h3>
-                <button onclick="toggleMainMenu(null)" style="background:transparent; border:none; color:#888; cursor:pointer; font-size:1.1rem;">✕ Tutup</button>
+                <h3 style="color:#ffd700;">MENU PANEL: ${activeMainMenu}</h3>
+                <button onclick="toggleMainMenu(null)" style="background:transparent; border:none; color:#888; cursor:pointer;">✕ Tutup</button>
               </div>
-              <div>${renderMainTabPopover(game)}</div>
+              <div>${renderMainPopoverContent(game)}</div>
             </div>
           ` : ''}
 
-          <!-- BAR SS BARU (BOTTOM FORM INPUT) -->
+          <!-- BAR SS BAWAH -->
           <div class="bar-ss">
-            <span style="font-size:0.75rem; color:#888; white-space:nowrap;">🎲 BAR SS (2D6):</span>
-            
-            <select id="ssSource" class="ss-select">
-              <option value="Prof. Handoko">👤 Prof. Handoko (Skill)</option>
-              <option value="Cthulhu Spawn">👹 Cthulhu Spawn (Serangan)</option>
-            </select>
-
-            <input type="text" id="ssAction" class="ss-input" placeholder="Nama Pengecekan/Skill..." style="flex:1;" />
-            
-            <span style="font-size:0.7rem; color:#aaa;">Target(2-12):</span>
+            <span style="font-size:0.75rem; color:#ffd700; white-space:nowrap;">🎲 ROLL 2D6:</span>
+            <select id="ssSource" class="ss-select">${ssOptions || '<option value="Skenario">Skenario</option>'}</select>
+            <input type="text" id="ssAction" class="ss-input" placeholder="Aksi/Skill..." style="flex:1;" />
+            <span style="font-size:0.7rem; color:#aaa;">Target:</span>
             <input type="number" id="ssTarget" class="ss-input ss-input-num" min="2" max="12" value="7" />
-            
-            <span style="font-size:0.7rem; color:#aaa;">Hasil Dadu:</span>
+            <span style="font-size:0.7rem; color:#aaa;">Dadu Fisik:</span>
             <input type="number" id="ssRoll" class="ss-input ss-input-num" min="2" max="12" placeholder="2-12" />
-
-            <button type="button" class="ss-btn" onclick="submitBarSSRoll()">Terapkan</button>
+            <button class="ss-btn" onclick="submitRoll()">Roll</button>
           </div>
-
         </div>
       `;
     }
 
-    function renderMainTabPopover(game) {
-      if (activeMainMenu === 'M') return `<p>📍 Ganti lokasi peta skenario atau gerakkan token rombongan karakter Anda di atas meja fisik.</p>`;
-      if (activeMainMenu === 'C') return `<p>📖 <strong>Biografi Investigator:</strong><br>${game.data.characters[0].description}</p>`;
-      
-      // MENU S: STYLE GRADASI HIJAU TUA CLASSIC (POIN E.1)
+    function renderMainPopoverContent(game) {
+      if (activeMainMenu === 'M') {
+        return `<h4>Daftar Peta Tersedia:</h4><ul>` + game.data.maps.map(m => `<li>📍 ${m.name}</li>`).join('') + `</ul>`;
+      }
+      if (activeMainMenu === 'C') {
+        return `<h4>Daftar Rombongan Investigator:</h4><ul>` + game.data.characters.map(c => `<li>👤 ${c.name} ${c.isDead?'[MATI]':''}</li>`).join('') + `</ul>`;
+      }
       if (activeMainMenu === 'S') {
-        const c = game.data.characters[0];
+        if(game.data.characters.length === 0) return "<p>Tidak ada karakter.</p>";
+        const c = game.data.characters[selectedCharIdx];
         const isHorrorActive = c.stats.hp.cur <= (c.stats.hp.max / 2);
         return `
-          <div style="display:flex; gap:15px; flex-direction:column;">
-            <h4>Lembar Status Investigator: ${c.name} ${c.isDead ? '[MATI]' : ''}</h4>
-            <div class="stat-card-grid">
-              <div class="coc-stat-box"><span class="coc-label">HP</span><div class="coc-num-row"><button class="coc-btn" onclick="modCharHp(-1)">-</button><span class="coc-number">${c.stats.hp.cur}</span><button class="coc-btn" onclick="modCharHp(1)">+</button></div><span class="coc-max">Max: ${c.stats.hp.max}</span></div>
-              <div class="coc-stat-box"><span class="coc-label">SANITY</span><div class="coc-num-row"><span></span><span class="coc-number">${c.stats.sanity}</span><span></span></div></div>
-              <div class="coc-stat-box"><span class="coc-label">LUCK</span><div class="coc-num-row"><span></span><span class="coc-number">${c.stats.luck}</span><span></span></div></div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="display:flex; justify-content:space-between;">
+              <h4>Status Investigator: ${c.name}</h4>
+              <div>
+                <button onclick="modSelectedCharIdx(-1)" class="coc-btn" ${selectedCharIdx===0?'disabled':''}>‹</button>
+                <span>${selectedCharIdx+1}/${game.data.characters.length}</span>
+                <button onclick="modSelectedCharIdx(1)" class="coc-btn" ${selectedCharIdx>=game.data.characters.length-1?'disabled':''}>›</button>
+              </div>
             </div>
-            <div style="background:#111; padding:10px; border-radius:4px; border:1px solid #222;">
-              <span style="color:${isHorrorActive?'#ff4444':'#888'}; font-weight:bold; font-size:0.85rem;">💀 DADU HOROR: ${isHorrorActive?'AKTIF':'NORMAL'}</span>
-              <p style="font-size:0.75rem; color:#666;">(Otomatis menyala merah jika HP karakter &le; 50% dari nilai maksimal)</p>
+            <div class="stat-card-grid">
+              <div class="coc-stat-box"><span class="coc-label">HP</span><div class="coc-num-row"><button class="coc-btn" onclick="changeLiveHp(-1)">-</button><span class="coc-number">${c.stats.hp.cur}</span><button class="coc-btn" onclick="changeLiveHp(1)">+</button></div><span class="coc-label">Max: ${c.stats.hp.max}</span></div>
+              <div class="coc-stat-box"><span class="coc-label">SANITY TARGET</span><div class="coc-num-row"><span></span><span class="coc-number">${c.stats.sanity}</span><span></span></div></div>
+            </div>
+            <div style="background:#111; padding:8px; border-radius:4px; border:1px solid ${isHorrorActive?'#8b0000':'#222'};">
+              <span style="color:${isHorrorActive?'#ff4444':'#888'}; font-weight:bold; font-size:0.8rem;">💀 STATUS DADU HOROR: ${isHorrorActive?'AKTIF (HP ≤ 50%)':'NORMAL'}</span>
             </div>
           </div>
         `;
       }
-      
-      if (activeMainMenu === 'I') return `<p>📦 <strong>Item Aktif:</strong> [${game.data.items[0].type.toUpperCase()}] ${game.data.items[0].name} <br> <span style='font-size:0.85rem; color:#888;'>${game.data.items[0].description}</span></p>`;
-      
-      // MENU N BARU (MONSTER / NPC)
+      if (activeMainMenu === 'I') {
+        return `<h4>Inventori Item Skenario:</h4><ul>` + game.data.items.map(i => `<li>📦 [${i.type.toUpperCase()}] ${i.name}</li>`).join('') + `</ul>`;
+      }
       if (activeMainMenu === 'N') {
-        const m = game.data.monsters[0];
-        return `
-          <div style="display:flex; gap:10px; flex-direction:column;">
-            <div style="background:#1c1c1c; border:1px solid #444; padding:12px; border-radius:6px;">
-              <span style="background:#8b0000; font-size:0.7rem; font-weight:bold; padding:2px 5px; border-radius:3px;">${m.kind.toUpperCase()}</span>
-              <h4 style="margin:5px 0;">${m.name}</h4>
-              <p style="color:#aaa; font-size:0.85rem; margin-bottom:10px;">${m.description}</p>
-              
-              <div class="coc-stat-box" style="width:100px;">
-                <span class="coc-label">HP MONSTER</span>
-                <div class="coc-num-row">
-                  <button class="coc-btn" onclick="modMonsterHp(-1)">-</button>
-                  <span class="coc-number">${m.hp.cur}</span>
-                  <button class="coc-btn" onclick="modMonsterHp(1)">+</button>
-                </div>
-              </div>
+        return `<h4>Daftar Bahaya / NPC:</h4>` + game.data.monsters.map((m, idx) => `
+          <div style="background:#111; padding:8px; border-radius:4px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+            <span>👹 <strong>${m.name}</strong> (${m.kind.toUpperCase()})</span>
+            <div class="coc-num-row" style="gap:10px;">
+              <button class="coc-btn" onclick="changeLiveMonsterHp(${idx},-1)">-</button>
+              <span style="color:#ff4444; font-weight:bold;">HP: ${m.hp.cur}/${m.hp.max}</span>
+              <button class="coc-btn" onclick="changeLiveMonsterHp(${idx},1)">+</button>
             </div>
           </div>
-        `;
+        `).join('');
       }
     }
 
     window.toggleMainMenu = (m) => { activeMainMenu = m; navigate(); };
+    window.modSelectedCharIdx = (delta) => { selectedCharIdx += delta; navigate(); };
     
-    window.modCharHp = (delta) => {
-      const g = getActiveGame(); const c = g.data.characters[0];
+    window.changeLiveHp = (delta) => {
+      const g = getActiveGame(); const c = g.data.characters[selectedCharIdx];
       c.stats.hp.cur = Math.max(0, Math.min(c.stats.hp.max, c.stats.hp.cur + delta));
-      if(c.stats.hp.cur === 0) c.isDead = true; else c.isDead = false;
-      saveState(); navigate();
+      c.isDead = (c.stats.hp.cur === 0); saveState(); navigate();
     };
 
-    window.modMonsterHp = (delta) => {
-      const g = getActiveGame(); const m = g.data.monsters[0];
+    window.changeLiveMonsterHp = (idx, delta) => {
+      const g = getActiveGame(); const m = g.data.monsters[idx];
       m.hp.cur = Math.max(0, Math.min(m.hp.max, m.hp.cur + delta));
       saveState(); navigate();
     };
 
-    // FORM ACTION SUBMIT REGISTER LOG (DISCORD STYLE CARD POIN E.2)
-    window.submitBarSSRoll = () => {
+    window.submitRoll = () => {
       const source = document.getElementById("ssSource").value;
-      const action = document.getElementById("ssAction").value.trim() || "Pengecekan Taktis";
+      const action = document.getElementById("ssAction").value.trim() || "Pengecekan Sistem";
       const target = parseInt(document.getElementById("ssTarget").value);
       const roll = parseInt(document.getElementById("ssRoll").value);
 
-      if (isNaN(roll) || roll < 2 || roll > 12) return alert("Isi angka hasil dadu fisik 2-12!");
+      if(isNaN(roll) || roll < 2 || roll > 12) return alert("Masukkan angka dadu fisik gabungan 2-12!");
 
       const outcome = compute2D6Outcome(roll, target);
-      const timeStr = new Date().toLocaleTimeString();
-
-      // Buat popover alert instan yang menyerupai bentuk kartu bot Discord
-      const logHtml = `
-        <div class="roll-card-log">
-          <div class="rc-header"><span>👤 ${source}</span> <span>${timeStr}</span></div>
-          <div class="rc-title">${action.toUpperCase()}</div>
-          <div class="rc-banner" style="background-color:${outcome.color};">${outcome.text}</div>
-          <div class="rc-body">
-            <span>Dadu Fisik: <strong>${roll}</strong></span>
-            <span>vs</span>
-            <span>Target (2-12): <strong>${target}</strong></span>
-          </div>
-        </div>
-      `;
-
-      alert(`🎲 BERHASIL MENCATAT DAFTAR KOCKAN!\n\nHasil: ${outcome.text} (${roll} vs Target ${target})`);
+      alert(`🎲 LOG REGISTERED!\n\n${source} melakukan ${action}\nHasil Dadu: ${roll} vs Target: ${target}\nStatus: ${outcome.text}`);
       
-      const game = getActiveGame();
-      game.data.logs.unshift({ source, action, roll, target, outcome, timeStr });
-      saveState();
       document.getElementById("ssRoll").value = "";
     };
 
-    // INIT APPS RUNNER
     navigate();
   </script>
 </body>
