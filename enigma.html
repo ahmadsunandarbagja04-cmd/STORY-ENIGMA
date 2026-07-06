@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Story of Enigma - CoC Companion v5</title>
+  <title>Story of Enigma - CoC Companion v6</title>
   <style>
     /* --- DESIGN SYSTEM & RESET --- */
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,7 +30,7 @@
       font-family: monospace; letter-spacing: 1px; width: 280px; margin: 10px;
       transition: 0.2s;
     }
-    .btn-large:hover { background: #cca54a; color: #0c0c0b; }
+    .btn-large:hover { background: #cca54a; color: #0c0b0b; }
 
     /* --- MODE SETUP (PORTRAIT) --- */
     .setup-container { display: flex; flex-direction: column; min-height: 100vh; padding-bottom: 70px; }
@@ -56,7 +56,6 @@
     .btn-toggle-row { display: flex; gap: 5px; margin-bottom: 15px; }
     .btn-toggle { flex: 1; padding: 8px; background: #131512; border: 1px solid #33382e; color: #61665a; cursor: pointer; font-family: monospace; font-size: 0.75rem; }
     .btn-toggle.active { border-color: #cca54a; color: #cca54a; background: #181b17; font-weight: bold; }
-    .attack-input-row { display: flex; gap: 5px; margin-bottom: 5px; align-items: center; }
 
     /* --- MODE MAIN (LANDSCAPE FORCE) --- */
     .main-container { display: none; width: 100vw; height: 100vh; position: relative; overflow: hidden; background: #050505; }
@@ -95,7 +94,6 @@
     .panel-header { padding: 10px; background: #141814; border-bottom: 1px solid #252822; display: flex; justify-content: space-between; align-items: center; }
     .panel-body { padding: 12px; flex: 1; overflow-y: auto; }
     
-    /* --- CAROUSEL DESIGN PANEL --- */
     .carousel-wrapper { display: flex; align-items: center; justify-content: space-between; background: #131512; border: 1px solid #252822; padding: 6px; margin-bottom: 12px; border-radius: 4px; }
     .carousel-arrow { background: #1c1e1b; border: 1px solid #cca54a; color: #cca54a; font-size: 1.1rem; font-weight: bold; cursor: pointer; padding: 2px 12px; border-radius: 3px; }
     .carousel-arrow:hover { background: #cca54a; color: #000; }
@@ -107,8 +105,8 @@
     .stat-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 10px 0; }
     .stat-box-mini { background: #050805; border: 1px solid #1e3322; border-radius: 3px; text-align: center; padding: 5px 2px; position: relative; }
     .stat-label-mini { font-size: 0.6rem; color: #5a8763; display: block; text-transform: uppercase; font-weight: bold; }
-    .stat-val-large { font-size: 1.2rem; font-weight: bold; color: #d4cfb8; display: block; margin: 2px 0; }
-    .stat-box-btn { position: absolute; top: 0; bottom: 0; width: 18px; background: rgba(30,51,34,0.3); border: none; color: #5a8763; font-weight: bold; cursor: pointer; font-size: 0.7rem; }
+    .stat-val-large { font-size: 1.1rem; font-weight: bold; color: #d4cfb8; display: block; margin: 2px 0; }
+    .stat-box-btn { position: absolute; top: 0; bottom: 0; width: 16px; background: rgba(30,51,34,0.3); border: none; color: #5a8763; font-weight: bold; cursor: pointer; font-size: 0.7rem; }
     .stat-box-btn.minus { left: 0; }
     .stat-box-btn.plus { right: 0; }
 
@@ -137,16 +135,16 @@
   <div id="app-viewport"></div>
 
   <script>
-    const STORAGE_KEY = "STORY_ENIGMA_DATA_2026_V5"; // Key diubah agar fresh
+    const STORAGE_KEY = "STORY_ENIGMA_2026_V6";
 
     let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
       mode: "welcome", 
-      setupTab: "peta",
+      setupTab: "karakter",
       activeHudMenu: null, 
       carouselIdx: { character: 0, sanity: 0, item: 0, threat: 0 },
       data: {
         maps: [{ id: "m1", name: "Gedung Tua Miskatonic", url: "https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?q=80&w=1000&auto=format&fit=crop" }],
-        characters: [{ id: "c1", name: "Prof. Armitage", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop", bio: "Seorang peneliti senior.", skills: [{name: "Mitos Cthulhu", value: 5}], status: { hp: 10, hp_max: 10, sanity: 8, sanity_max: 12, mp: 8, mp_max: 8, luck: 11, luck_max: 12 }, weapons: [], conditions: [], logs: [] }],
+        characters: [],
         items: [],
         monsters: [] 
       },
@@ -177,68 +175,101 @@
       if (name && url) { state.data.maps.push({ id: "m_" + Date.now(), name, url }); syncStorage(); renderEngine(); }
     }
 
-    function addCharacter() {
-      let name = prompt("Nama Investigator:"); let url = prompt("URL Foto Profil:"); let bio = prompt("Cerita Investigator:");
+    // --- ONE-DOOR SETUP INVESTIGATOR ---
+    function createInvestigator() {
+      let name = prompt("Nama Investigator:");
+      let face = prompt("URL Foto Profil / Token:", "https://via.placeholder.com/150");
       if (!name) return;
+
+      // Sesuai Struktur Data Default Tanpa Mengubah Pola Asli
       state.data.characters.push({
-        id: "c_" + Date.now(), name, image: url || "https://via.placeholder.com/150", bio: bio || "", skills: [],
-        status: { hp: 10, hp_max: 10, sanity: 12, sanity_max: 12, mp: 10, mp_max: 10, luck: 10, luck_max: 12 },
-        weapons: [], conditions: [], logs: []
+        id: "c_" + Date.now(),
+        name: name,
+        face: face,
+        story: prompt("Cerita Latar Belakang:") || "",
+        stats: {
+          sanity: { cur: 50, max: 99 },
+          hp: { cur: 10, max: 10 },
+          luck: { cur: 50, max: 99 },
+          mp: { cur: 10, max: 10 }
+        },
+        skills: [],
+        weapons: [], // Field Baru Mengikuti Pola StatCard
+        horror: { override: null, reason: "" },
+        conditions: [],
+        isDead: false,
+        deathOverride: null,
+        log: []
       });
-      syncStorage(); renderEngine();
+      syncStorage();
+      renderEngine();
     }
 
-    function addItem() {
-      let name = prompt("Nama Item:"); let type = prompt("Kategori:", "buku"); let desc = prompt("Cerita Item:");
-      if (name) { state.data.items.push({ id: "i_" + Date.now(), name, type, deskripsi: desc || "" }); syncStorage(); renderEngine(); }
-    }
-
+    // --- ONE-DOOR SETUP ANCAMAN (MONSTER / NPC / VILLAIN) ---
     let setupKindN = "monster";
     function changeSetupKindN(kind) { setupKindN = kind; renderEngine(); }
 
-    function saveNewEntityN() {
-      let name = document.getElementById("n_name").value.trim();
-      let img = document.getElementById("n_img").value.trim() || "https://via.placeholder.com/150";
-      let desc = document.getElementById("n_desc").value.trim();
-      if (!name) return alert("Nama wajib diisi!");
+    function createThreatEntity() {
+      let name = prompt("Nama Ancaman (Monster/NPC/Villain):");
+      if (!name) return;
+      let face = prompt("URL Foto/Token:", "https://via.placeholder.com/150");
+      let desc = prompt("Deskripsi / Cerita Kronologi:");
 
-      let newEnt = { id: "n_" + Date.now(), name, image: img, description: desc, kind: setupKindN, isDead: false };
+      let newEnt = {
+        id: "n_" + Date.now(),
+        name: name,
+        image: face,
+        description: desc || "",
+        kind: setupKindN, // monster, npc, atau villain
+        isDead: false,
+        log: []
+      };
+
+      // Otomatis inject data pendukung sesuai jenisnya langsung di satu tempat
       if (setupKindN !== "npc") {
-        let hpVal = parseInt(document.getElementById("n_hp").value) || 10;
-        newEnt.hp = { cur: hpVal, max: hpVal }; newEnt.attacks = [];
-        let maxLoop = setupKindN === "monster" ? 3 : 4;
-        for (let i = 1; i <= maxLoop; i++) {
-          let attName = document.getElementById(`att_name_${i}`).value.trim();
-          let attTarget = parseInt(document.getElementById(`att_target_${i}`).value) || 6;
-          if (attName) newEnt.attacks.push({ id: "a_" + i, name: attName, value: attTarget });
-        }
+        newEnt.hp = { cur: 10, max: 10 };
+        newEnt.attacks = []; // Wadah serangan bawaan
       }
-      if (setupKindN === "villain") newEnt.weapons = [];
-      state.data.monsters.push(newEnt); syncStorage(); alert("Ancaman Disimpan!"); renderEngine();
+      if (setupKindN === "villain") {
+        newEnt.weapons = []; // Wadah senjata kanon Villain
+      }
+
+      state.data.monsters.push(newEnt);
+      syncStorage();
+      renderEngine();
     }
 
-    function toggleDeathOverride(type, id) {
-      let ent = type === 'char' ? state.data.characters.find(c => c.id === id) : state.data.monsters.find(m => m.id === id);
-      if (!ent) return;
-      ent.isDead = !ent.isDead; if(ent.hp) ent.hp.cur = ent.isDead ? 0 : ent.hp.max;
-      syncStorage(); renderEngine();
-    }
-
-    function addNewSkill(charId) {
-      let c = state.data.characters.find(x => x.id === charId);
-      let sName = prompt("Nama Skill Baru:");
+    function addSkillToEntity(entityId) {
+      let c = state.data.characters.find(x => x.id === entityId);
+      let sName = prompt("Nama Skill:");
       let sVal = parseInt(prompt("Nilai Target Keberhasilan (2-12):", "6"));
-      if(c && sName && !isNaN(sVal)) { c.skills.push({ name: sName, value: sVal }); syncStorage(); renderEngine(); }
+      if (c && sName && !isNaN(sVal)) {
+        c.skills.push({ name: sName, value: sVal });
+        syncStorage(); renderEngine();
+      }
     }
 
-    function appendWeaponEntity(type, entId) {
+    function addWeaponToEntity(type, entId) {
       let ent = type === 'char' ? state.data.characters.find(c => c.id === entId) : state.data.monsters.find(m => m.id === entId);
-      let wName = prompt("Nama Senjata:"); let wType = prompt("Tipe (melee/firearm):", "firearm");
-      if (!wName) return;
+      if (!ent) return;
+      let wName = prompt("Nama Senjata:");
       let maxCap = parseInt(prompt("Kapasitas Peluru / Durabilitas Maksimal:", "6")) || 6;
+      if (!wName) return;
+
       if (!ent.weapons) ent.weapons = [];
-      ent.weapons.push({ id: "w_" + Date.now(), name: wName, type: wType, durability: { cur: maxCap, max: maxCap } });
+      ent.weapons.push({ id: "w_" + Date.now(), name: wName, durability: { cur: maxCap, max: maxCap } });
       syncStorage(); renderEngine();
+    }
+
+    function addAttackToMonster(mId) {
+      let m = state.data.monsters.find(x => x.id === mId);
+      let aName = prompt("Nama Serangan Brutal:");
+      let aVal = parseInt(prompt("Nilai Target Dadu (2-12):", "6"));
+      if (m && aName && !isNaN(aVal)) {
+        if (!m.attacks) m.attacks = [];
+        m.attacks.push({ name: aName, value: aVal });
+        syncStorage(); renderEngine();
+      }
     }
 
     function moveCarousel(key, dir, maxLen) {
@@ -249,52 +280,49 @@
 
     function changeStat(charId, statField, amt) {
       let c = state.data.characters.find(x => x.id === charId); if (!c) return;
-      c.status[statField] = Math.max(0, Math.min(c.status[statField + "_max"], c.status[statField] + amt));
-      if (statField === 'hp' && c.status.hp === 0) c.isDead = true;
+      let target = c.stats[statField];
+      target.cur = Math.max(0, Math.min(target.max, target.cur + amt));
+      if (statField === 'hp' && target.cur === 0) c.isDead = true;
+      syncStorage(); renderEngine();
+    }
+
+    function changeMonsterHp(mId, amt) {
+      let m = state.data.monsters.find(x => x.id === mId); if (!m || !m.hp) return;
+      m.hp.cur = Math.max(0, Math.min(m.hp.max, m.hp.cur + amt));
+      if (m.hp.cur === 0) m.isDead = true;
       syncStorage(); renderEngine();
     }
 
     function triggerSanityFormula(charId, formulaName) {
-      let resultStr = prompt(`[SANITY] Hasil dadu fisik pengurangan untuk formula ${formulaName}:`);
+      let resultStr = prompt(`[SANITY] Hasil kocokan dadu fisik untuk pengurangan formula ${formulaName}:`);
       let dmg = parseInt(resultStr); if (isNaN(dmg) || dmg < 0) return;
       let c = state.data.characters.find(x => x.id === charId);
       if (c) { 
-        c.status.sanity = Math.max(0, c.status.sanity - dmg); 
-        alert(`Sanity ${c.name} berkurang ${dmg} poin!`);
+        c.stats.sanity.cur = Math.max(0, c.stats.sanity.cur - dmg); 
         syncStorage(); renderEngine(); 
       }
     }
 
-    // --- FUNGSI KHUSUS UNTUK SANITY CHECK DI MENU S ---
+    // --- ROLL SANITY CHECK KHUSUS DI MENU S Dimensi Main ---
     function processSanityCheck(charId) {
-      let c = state.data.characters.find(x => x.id === charId);
-      if (!c) return;
-      
+      let c = state.data.characters.find(x => x.id === charId); if (!c) return;
       let inputElem = document.getElementById("san_dice_result_" + charId);
       let diceResult = parseInt(inputElem.value);
       
       if (isNaN(diceResult) || diceResult < 2 || diceResult > 12) {
-        return alert("Masukkan hasil kocokan dadu 2D6 fisik (2-12) pada kolom Sanity Check!");
+        return alert("Masukkan kocokan dadu 2D6 fisik (2-12)!");
       }
 
-      let targetValue = c.status.sanity; // Nilai sanity saat ini jadi target lulus
-      let evalRes = computeRoll2D6(targetValue, diceResult);
-      
-      // Override status karena sanity check punya nuansa sendiri
+      let targetValue = c.stats.sanity.cur;
       let sanStatus = diceResult <= targetValue ? "BERHASIL KEWARASAN" : "GAGAL KEWARASAN (SHOCK)";
+      let cssClass = diceResult <= targetValue ? "banner-success" : "banner-fail";
       
       state.rollLogs.unshift({ 
-        entityName: c.name, 
-        actionName: "Sanity Check (Uji Mental)", 
-        targetSkill: targetValue, 
-        diceResult: diceResult, 
-        status: sanStatus, 
-        cssClass: evalRes.css 
+        entityName: c.name, actionName: "Sanity Check (Uji Mental)", 
+        targetSkill: targetValue, diceResult, status: sanStatus, cssClass 
       });
       
-      inputElem.value = ""; // Reset input
-      syncStorage(); 
-      renderEngine();
+      inputElem.value = ""; syncStorage(); renderEngine();
     }
 
     function syncRollSourceOptions() {
@@ -330,16 +358,13 @@
     }
 
     function processRollFromBarSS() {
-      let src = document.getElementById("ss_source").value;
       let subVal = document.getElementById("ss_sub_target").value;
       let manualTarget = parseInt(document.getElementById("ss_target_manual").value) || 6;
       let diceResult = parseInt(document.getElementById("ss_dice_result").value);
 
-      if (isNaN(diceResult) || diceResult < 2 || diceResult > 12) return alert("Masukkan hasil kocokan dadu 2D6 fisik (2-12) di Bar Bawah!");
+      if (isNaN(diceResult) || diceResult < 2 || diceResult > 12) return alert("Masukkan hasil 2D6!");
 
-      let entityName = "Sistem";
-      let actionName = "Tes Manual";
-      let targetValue = manualTarget;
+      let entityName = "Sistem"; let actionName = "Tes Manual"; let targetValue = manualTarget;
 
       if (subVal) {
         let tokens = subVal.split(":");
@@ -347,53 +372,29 @@
 
         if (category === "c_skill") {
           let c = state.data.characters.find(x => x.id === tokens[1]);
-          entityName = c ? c.name : "Investigator";
-          actionName = `Gunakan Skill: ${tokens[2]}`;
-          targetValue = parseInt(tokens[3]);
+          entityName = c ? c.name : "Investigator"; actionName = `Skill: ${tokens[2]}`; targetValue = parseInt(tokens[3]);
         } 
         else if (category === "c_weapon") {
           let c = state.data.characters.find(x => x.id === tokens[1]);
           let wp = c?.weapons?.find(w => w.id === tokens[2]);
-          entityName = c ? c.name : "Investigator";
-          actionName = `Menembak/Menyerang: ${tokens[3]}`;
-          targetValue = 6;
-          if (wp) {
-            wp.durability.cur = Math.max(0, wp.durability.cur - 1);
-            alert(`[AMUNISI] ${wp.name} berkurang 1 pemakaian.`);
-          }
+          entityName = c ? c.name : "Investigator"; actionName = `Menembak: ${tokens[3]}`; targetValue = 6;
+          if (wp) wp.durability.cur = Math.max(0, wp.durability.cur - 1);
         } 
         else if (category === "m_atk") {
           let m = state.data.monsters.find(x => x.id === tokens[1]);
-          entityName = m ? m.name : "Monster";
-          actionName = `Serangan: ${tokens[2]}`;
-          targetValue = parseInt(tokens[3]);
+          entityName = m ? m.name : "Monster"; actionName = `Serang: ${tokens[2]}`; targetValue = parseInt(tokens[3]);
         } 
         else if (category === "v_weapon") {
           let v = state.data.monsters.find(x => x.id === tokens[1]);
           let wp = v?.weapons?.find(w => w.id === tokens[2]);
-          entityName = v ? v.name : "Villain";
-          actionName = `Menembak Senjata: ${tokens[3]}`;
-          targetValue = 6;
-          if (wp) {
-            wp.durability.cur = Math.max(0, wp.durability.cur - 1);
-            alert(`[AMUNISI] Senjata Villain ${wp.name} berkurang 1.`);
-          }
+          entityName = v ? v.name : "Villain"; actionName = `Tembak Villain: ${tokens[3]}`; targetValue = 6;
+          if (wp) wp.durability.cur = Math.max(0, wp.durability.cur - 1);
         }
       }
 
       let evalRes = computeRoll2D6(targetValue, diceResult);
-      state.rollLogs.unshift({ 
-        entityName, 
-        actionName, 
-        targetSkill: targetValue, 
-        diceResult, 
-        status: evalRes.status, 
-        cssClass: evalRes.css 
-      });
-      
-      document.getElementById("ss_dice_result").value = "";
-      syncStorage(); 
-      renderEngine();
+      state.rollLogs.unshift({ entityName, actionName, targetSkill: targetValue, diceResult, status: evalRes.status, cssClass: evalRes.css });
+      document.getElementById("ss_dice_result").value = ""; syncStorage(); renderEngine();
     }
 
     let currentDraggedTokenId = null;
@@ -415,42 +416,97 @@
         view.innerHTML = `<div class="welcome-screen"><div class="title-banner">STORY OF ENIGMA</div><button class="btn-large" onclick="setMode('setup')">🔮 SETUP STORY</button><button class="btn-large" onclick="setMode('main')">▶ MULAI MAIN</button></div>`;
         return;
       }
+      
+      // --- REGION MODE SETUP ---
       if (state.mode === "setup") {
         let tabContentHtml = "";
-        if (state.setupTab === "peta") {
-          tabContentHtml = `<button class="btn-large" style="width:100%; margin-bottom:15px;" onclick="addMap()">+ Tambah Peta</button>${state.data.maps.map(m => `<div class="box-card">🗺️ ${m.name}</div>`).join('')}`;
-        } else if (state.setupTab === "karakter") {
-          tabContentHtml = `<button class="btn-large" style="width:100%; margin-bottom:15px;" onclick="addCharacter()">+ Tambah Investigator</button>${state.data.characters.map(c => `<div class="box-card">👤 ${c.name}</div>`).join('')}`;
-        } else if (state.setupTab === "monsters") {
+        
+        if (state.setupTab === "karakter") {
           tabContentHtml = `
-            <div class="box-card">
+            <button class="btn-large" style="width:100%; margin-bottom:15px;" onclick="createInvestigator()">+ Investigator Baru</button>
+            ${state.data.characters.map(c => `<div class="box-card">👤 <strong>${c.name}</strong><br><span style="font-size:0.7rem; color:#61665a;">ID: ${c.id}</span></div>`).join('')}
+          `;
+        } 
+        else if (state.setupTab === "sanity") {
+          // KARTU STATUS INVESTIGATOR PADA SETUP (KONSISTEN DENGAN CARA KERJA LAMA)
+          tabContentHtml = `
+            ${state.data.characters.length === 0 ? '<p style="color:#61665a; text-align:center;">Belum ada Investigator. Buat terlebih dahulu di Tab Karakter.</p>' : 
+            state.data.characters.map(c => `
+              <div class="stat-card-classic">
+                <strong class="text-gold" style="font-size:1rem;">${c.name}</strong>
+                <div class="stat-grid-4">
+                  <div class="stat-box-mini"><button class="stat-box-btn minus" onclick="changeStat('${c.id}','hp',-1)">-</button><span class="stat-label-mini">HP</span><span class="stat-val-large">${c.stats.hp.cur}/${c.stats.hp.max}</span><button class="stat-box-btn plus" onclick="changeStat('${c.id}','hp',1)">+</button></div>
+                  <div class="stat-box-mini"><button class="stat-box-btn minus" onclick="changeStat('${c.id}','sanity',-5)">-</button><span class="stat-label-mini">SAN</span><span class="stat-val-large">${c.stats.sanity.cur}/${c.stats.sanity.max}</span><button class="stat-box-btn plus" onclick="changeStat('${c.id}','sanity',5)">+</button></div>
+                  <div class="stat-box-mini"><button class="stat-box-btn minus" onclick="changeStat('${c.id}','mp',-1)">-</button><span class="stat-label-mini">MP</span><span class="stat-val-large">${c.stats.mp.cur}/${c.stats.mp.max}</span><button class="stat-box-btn plus" onclick="changeStat('${c.id}','mp',1)">+</button></div>
+                  <div class="stat-box-mini"><button class="stat-box-btn minus" onclick="changeStat('${c.id}','luck',-5)">-</button><span class="stat-label-mini">LCK</span><span class="stat-val-large">${c.stats.luck.cur}/${c.stats.luck.max}</span><button class="stat-box-btn plus" onclick="changeStat('${c.id}','luck',5)">+</button></div>
+                </div>
+                
+                <!-- Skill & Weapon Dikelola Di Kartu Yang Sama Tanpa Lapisan Menu Ekstra -->
+                <div style="margin-top:10px; border-top:1px dashed #27442d; padding-top:6px;">
+                  <span class="stat-label-mini">SKILLS: <button onclick="addSkillToEntity('${c.id}')" style="background:none; border:none; color:#cca54a; font-family:monospace; cursor:pointer;">[+ Tambah Skill]</button></span>
+                  ${c.skills.map(s => `<div style="font-size:0.7rem; color:#d4cfb8;">• ${s.name} (${s.value})</div>`).join('')}
+                </div>
+                <div style="margin-top:8px; border-top:1px dashed #27442d; padding-top:6px;">
+                  <span class="stat-label-mini">SENJATA KANON: <button onclick="addWeaponToEntity('char','${c.id}')" style="background:none; border:none; color:#cca54a; font-family:monospace; cursor:pointer;">[+ Tambah Senjata]</button></span>
+                  ${c.weapons?.map(w => `<div style="font-size:0.7rem; color:#d4cfb8;">⚔️ ${w.name} (Amunisi: ${w.durability.cur}/${w.durability.max})</div>`).join('')}
+                </div>
+              </div>
+            `).join('')}
+          `;
+        }
+        else if (state.setupTab === "monsters") {
+          tabContentHtml = `
+            <div class="box-card" style="margin-bottom:20px;">
+              <span class="stat-label-mini" style="margin-bottom:5px;">PILIH KATEGORI ENTRY:</span>
               <div class="btn-toggle-row">
                 <button class="btn-toggle ${setupKindN==='monster'?'active':''}" onclick="changeSetupKindN('monster')">MONSTER</button>
                 <button class="btn-toggle ${setupKindN==='npc'?'active':''}" onclick="changeSetupKindN('npc')">NPC</button>
                 <button class="btn-toggle ${setupKindN==='villain'?'active':''}" onclick="changeSetupKindN('villain')">VILLAIN</button>
               </div>
-              <div class="form-group"><label>NAMA</label><input id="n_name" type="text" class="input-ctrl"></div>
-              <div class="form-group"><label>URL TOKEN</label><input id="n_img" type="text" class="input-ctrl"></div>
-              <div class="form-group"><label>CERITA</label><input id="n_desc" type="text" class="input-ctrl"></div>
-              ${setupKindN !== 'npc' ? `
-                <div class="form-group"><label>HP</label><input id="n_hp" type="number" class="input-ctrl" value="10"></div>
-                <label style="font-size:0.75rem; color:#cca54a;">SERANGAN BRUTAL (Max ${setupKindN==='monster'?3:4})</label>
-                ${[1,2,3,4].map(i => (setupKindN==='monster' && i>3) ? '' : `
-                  <div class="attack-input-row">
-                    <input id="att_name_${i}" type="text" class="input-ctrl" placeholder="Nama Serangan" style="flex:2;">
-                    <input id="att_target_${i}" type="number" class="input-ctrl" placeholder="Target 2-12" style="flex:1;">
+              <button class="btn-start-play" style="width:100%;" onclick="createThreatEntity()">+ Buat Entry Ancaman</button>
+            </div>
+
+            <!-- KARTU MANAGEMENT ENTRY ANCAMAN LANGSUNG DI TEMPAT YANG SAMA -->
+            ${state.data.monsters.map(m => `
+              <div class="stat-card-classic" style="border-color:#aa3333;">
+                <strong style="color:#f59898;">[${m.kind.toUpperCase()}] ${m.name}</strong>
+                <p style="font-size:0.7rem; color:#61665a; margin:4px 0;">${m.description}</p>
+                
+                ${m.hp ? `
+                  <div style="margin:10px 0 5px 0; display:flex; align-items:center; gap:10px;">
+                    <span class="stat-label-mini">DARAH (HP):</span>
+                    <button style="padding:2px 8px; background:#4a1d1d; border:none; color:white;" onclick="changeMonsterHp('${m.id}', -1)">-</button>
+                    <span style="font-size:0.9rem; font-weight:bold;">${m.hp.cur}/${m.hp.max}</span>
+                    <button style="padding:2px 8px; background:#1c3d22; border:none; color:white;" onclick="changeMonsterHp('${m.id}', 1)">+</button>
                   </div>
-                `).join('')}
-              ` : ''}
-              <button class="btn-start-play" style="width:100%; margin-top:10px;" onclick="saveNewEntityN()">Simpan Ancaman</button>
-            </div>`;
-        } else if (state.setupTab === "item") {
-          tabContentHtml = `<button class="btn-large" style="width:100%; margin-bottom:15px;" onclick="addItem()">+ Tambah Item</button>${state.data.items.map(i => `<div class="box-card">📦 ${i.name}</div>`).join('')}`;
+                ` : ''}
+
+                ${m.attacks ? `
+                  <div style="margin-top:8px; border-top:1px dashed #aa3333; padding-top:6px;">
+                    <span class="stat-label-mini">SERANGAN BAWAAN: <button onclick="addAttackToMonster('${m.id}')" style="background:none; border:none; color:#f59898; font-family:monospace; cursor:pointer;">[+ Serangan]</button></span>
+                    ${m.attacks.map(a => `<div style="font-size:0.7rem;">• ${a.name} (Target: ${a.value})</div>`).join('')}
+                  </div>
+                ` : ''}
+
+                ${m.kind === 'villain' ? `
+                  <div style="margin-top:8px; border-top:1px dashed #aa3333; padding-top:6px;">
+                    <span class="stat-label-mini">GUDANG SENJATA VILLAIN: <button onclick="addWeaponToEntity('monster','${m.id}')" style="background:none; border:none; color:#f59898; font-family:monospace; cursor:pointer;">[+ Senjata]</button></span>
+                    ${m.weapons?.map(w => `<div style="font-size:0.7rem;">☠️ ${w.name} (Amunisi: ${w.durability.cur}/${w.durability.max})</div>`).join('')}
+                  </div>
+                ` : ''}
+              </div>
+            `).join('')}
+          `;
+        } 
+        else if (state.setupTab === "peta") {
+          tabContentHtml = `<button class="btn-large" style="width:100%; margin-bottom:15px;" onclick="addMap()">+ Tambah Peta</button>${state.data.maps.map(m => `<div class="box-card">🗺️ ${m.name}</div>`).join('')}`;
         }
-        view.innerHTML = `<div class="setup-container"><div class="tab-bar"><button class="tab-btn ${state.setupTab==='peta'?'active':''}" onclick="setSetupTab('peta')">Peta</button><button class="tab-btn ${state.setupTab==='karakter'?'active':''}" onclick="setSetupTab('karakter')">Investigator</button><button class="tab-btn ${state.setupTab==='monsters'?'active':''}" onclick="setSetupTab('monsters')">Ancaman</button><button class="tab-btn ${state.setupTab==='item'?'active':''}" onclick="setSetupTab('item')">Item</button></div><div class="setup-content">${tabContentHtml}</div><div class="setup-footer"><button class="btn-save-emoji" onclick="saveStateManual()">SIMPAN</button><button class="btn-start-play" onclick="setMode('main')">Main ▶</button></div></div>`;
+
+        view.innerHTML = `<div class="setup-container"><div class="tab-bar"><button class="tab-btn ${state.setupTab==='karakter'?'active':''}" onclick="setSetupTab('karakter')">Investigator</button><button class="tab-btn ${state.setupTab==='sanity'?'active':''}" onclick="setSetupTab('sanity')">Sanity/Stat</button><button class="tab-btn ${state.setupTab==='monsters'?'active':''}" onclick="setSetupTab('monsters')">Ancaman</button><button class="tab-btn ${state.setupTab==='peta'?'active':''}" onclick="setSetupTab('peta')">Peta</button></div><div class="setup-content">${tabContentHtml}</div><div class="setup-footer"><button class="btn-save-emoji" onclick="saveStateManual()">💾</button><button class="btn-start-play" onclick="setMode('main')">Main ▶</button></div></div>`;
         return;
       }
 
+      // --- REGION MODE MAIN (LANDSCAPE) ---
       if (state.mode === "main") {
         let activeMap = state.data.maps.find(m => m.id === state.selectedMapId) || state.data.maps[0];
         let isFrozen = state.activeHudMenu !== null ? "map-frozen" : "";
@@ -459,23 +515,23 @@
         if (state.activeHudMenu === 'C') {
           let cList = state.data.characters; let idx = state.carouselIdx.character; let c = cList[idx];
           overlayContentHtml = `
-            <div class="panel-header"><h4>MENU C - INVESTIGATOR PROFIL</h4><button onclick="toggleHudMenu(null)">❌</button></div>
+            <div class="panel-header"><h4>MENU C - INVESTIGATOR</h4><button onclick="toggleHudMenu(null)">❌</button></div>
             <div class="panel-body">
               ${cList.length === 0 ? '<p>Kosong</p>' : `
                 <div class="carousel-wrapper">
                   <button class="carousel-arrow" onclick="moveCarousel('character',-1,${cList.length})">‹</button>
-                  <strong class="text-gold">${c.name} (${idx+1}/${cList.length})</strong>
+                  <strong class="text-gold">${c.name}</strong>
                   <button class="carousel-arrow" onclick="moveCarousel('character',1,${cList.length})">›</button>
                 </div>
-                <div style="text-align:center;"><img src="${c.image}" style="width:110px; height:110px; object-fit:cover; border-radius:4px; border:1px solid #cca54a;"></div>
-                <p style="font-size:0.75rem; margin-top:10px; background:#000; padding:10px; border-radius:4px; line-height:1.4;"><strong>CERITA LATAR BELAKANG:</strong><br>${c.bio}</p>
+                <div style="text-align:center;"><img src="${c.face}" style="width:100px; height:100px; object-fit:cover; border-radius:4px; border:1px solid #cca54a;"></div>
+                <p style="font-size:0.75rem; margin-top:10px; background:#000; padding:8px; line-height:1.4;">${c.story}</p>
               `}
             </div>`;
         }
         else if (state.activeHudMenu === 'S') {
           let cList = state.data.characters; let idx = state.carouselIdx.sanity; let c = cList[idx];
           overlayContentHtml = `
-            <div class="panel-header"><h4>MENU S - STATUS CARD & SKILLS</h4><button onclick="toggleHudMenu(null)">❌</button></div>
+            <div class="panel-header"><h4>MENU S - STATUS CARD</h4><button onclick="toggleHudMenu(null)">❌</button></div>
             <div class="panel-body">
               ${cList.length === 0 ? '<p>Kosong</p>' : `
                 <div class="carousel-wrapper">
@@ -485,44 +541,25 @@
                 </div>
                 <div class="stat-card-classic">
                   <div class="stat-grid-4">
-                    <div class="stat-box-mini"><button class="stat-box-btn minus" onclick="changeStat('${c.id}','hp',-1)">-</button><span class="stat-label-mini">HP</span><span class="stat-val-large">${c.status.hp}</span><button class="stat-box-btn plus" onclick="changeStat('${c.id}','hp',1)">+</button></div>
-                    <div class="stat-box-mini"><button class="stat-box-btn minus" onclick="changeStat('${c.id}','sanity',-1)">-</button><span class="stat-label-mini">SAN</span><span class="stat-val-large">${c.status.sanity}</span><button class="stat-box-btn plus" onclick="changeStat('${c.id}','sanity',1)">+</button></div>
-                    <div class="stat-box-mini"><button class="stat-box-btn minus" onclick="changeStat('${c.id}','mp',-1)">-</button><span class="stat-label-mini">MP</span><span class="stat-val-large">${c.status.mp}</span><button class="stat-box-btn plus" onclick="changeStat('${c.id}','mp',1)">+</button></div>
-                    <div class="stat-box-mini"><button class="stat-box-btn minus" onclick="changeStat('${c.id}','luck',-1)">-</button><span class="stat-label-mini">LCK</span><span class="stat-val-large">${c.status.luck}</span><button class="stat-box-btn plus" onclick="changeStat('${c.id}','luck',1)">+</button></div>
+                    <div class="stat-box-mini"><button class="stat-box-btn minus" onclick="changeStat('${c.id}','hp',-1)">-</button><span class="stat-label-mini">HP</span><span class="stat-val-large">${c.stats.hp.cur}</span><button class="stat-box-btn plus" onclick="changeStat('${c.id}','hp',1)">+</button></div>
+                    <div class="stat-box-mini"><button class="stat-box-btn minus" onclick="changeStat('${c.id}','sanity',-1)">-</button><span class="stat-label-mini">SAN</span><span class="stat-val-large">${c.stats.sanity.cur}</span><button class="stat-box-btn plus" onclick="changeStat('${c.id}','sanity',1)">+</button></div>
+                    <div class="stat-box-mini"><button class="stat-box-btn minus" onclick="changeStat('${c.id}','mp',-1)">-</button><span class="stat-label-mini">MP</span><span class="stat-val-large">${c.stats.mp.cur}</span><button class="stat-box-btn plus" onclick="changeStat('${c.id}','mp',1)">+</button></div>
+                    <div class="stat-box-mini"><button class="stat-box-btn minus" onclick="changeStat('${c.id}','luck',-1)">-</button><span class="stat-label-mini">LCK</span><span class="stat-val-large">${c.stats.luck.cur}</span><button class="stat-box-btn plus" onclick="changeStat('${c.id}','luck',1)">+</button></div>
                   </div>
 
-                  <!-- AREA SANITY CHECK KHUSUS -->
+                  <!-- AREA TEMPAT ROLL SANITY CHECK KHUSUS SITUASI MENYERAMKAN -->
                   <div style="margin-top:12px; border-top:1px dashed #27442d; padding-top:8px;">
-                    <span class="stat-label-mini" style="margin-bottom:4px; display:block;">SANITY CHECK (UJI KEWARASAN):</span>
-                    <div style="display:flex; gap:5px; align-items:center;">
-                      <input id="san_dice_result_${c.id}" type="number" class="input-ctrl" style="width:70px; padding:6px; font-size:0.75rem;" placeholder="2D6">
-                      <button onclick="processSanityCheck('${c.id}')" style="background:#5a8763; color:#000; border:none; padding:6px 12px; font-weight:bold; font-size:0.7rem; cursor:pointer; border-radius:3px;">ROLL SAN CHECK</button>
+                    <span class="stat-label-mini" style="color:#cca54a; margin-bottom:4px; display:block;">ROLL SANITY CHECK (SITUASI MENYERAMKAN):</span>
+                    <div style="display:flex; gap:5px;">
+                      <input id="san_dice_result_${c.id}" type="number" class="input-ctrl" style="width:70px; padding:5px; font-size:0.75rem;" placeholder="2D6">
+                      <button onclick="processSanityCheck('${c.id}')" style="background:#cca54a; color:#000; border:none; padding:5px 10px; font-weight:bold; font-size:0.65rem; cursor:pointer;">ROLL SAN CHECK</button>
                     </div>
-                    <p style="font-size:0.6rem; color:#61665a; margin-top:4px;">Berhasil jika dadu <= nilai SAN saat ini (${c.status.sanity}). Jika gagal, kurangi instan di bawah ini:</p>
                   </div>
 
                   <div style="margin-top:8px;"><span class="stat-label-mini">HITUNG SANITY INSTAN:</span>
-                    <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:2px; margin-top:3px;">
+                    <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:2px;">
                       ${['1D2','1D3','1D4','1D6','1D8','1D10'].map(f => `<button onclick="triggerSanityFormula('${c.id}','${f}')" style="font-size:0.55rem; background:#1c3322; color:#fff; border:none; padding:4px 0; cursor:pointer;">${f}</button>`).join('')}
                     </div>
-                  </div>
-                  
-                  <!-- PENGELOLAAN SKILL KARAKTER -->
-                  <div style="margin-top:12px; border-top:1px dashed #27442d; padding-top:8px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                      <span class="stat-label-mini">DAFTAR SKILL INVESTIGATOR:</span>
-                      <button onclick="addNewSkill('${c.id}')" style="font-size:0.6rem; background:#222; color:#cca54a; border:1px solid #444; padding:2px 4px;">[+ Tambah Skill]</button>
-                    </div>
-                    ${c.skills.map(s => `<div style="font-size:0.7rem; background:#050805; padding:3px; margin:2px 0; border:1px solid #111;">• ${s.name} (Target Kelulusan: ${s.value})</div>`).join('')}
-                  </div>
-
-                  <!-- PENGELOLAAN SENJATA KARAKTER -->
-                  <div style="margin-top:12px; border-top:1px dashed #27442d; padding-top:8px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                      <span class="stat-label-mini">GUDANG SENJATA:</span>
-                      <button onclick="appendWeaponEntity('char','${c.id}')" style="font-size:0.6rem; background:#222; color:#cca54a; border:1px solid #444; padding:2px 4px;">[+ Tambah Senjata]</button>
-                    </div>
-                    ${c.weapons?.map(w => `<div style="font-size:0.7rem; background:#050805; padding:3px; margin:2px 0;">⚔️ ${w.name} (${w.type}) — Amunisi/Durabilitas: <strong>${w.durability.cur}/${w.durability.max}</strong></div>`).join('')}
                   </div>
                 </div>
               `}
@@ -531,34 +568,25 @@
         else if (state.activeHudMenu === 'N') {
           let nList = state.data.monsters; let idx = state.carouselIdx.threat; let n = nList[idx];
           overlayContentHtml = `
-            <div class="panel-header"><h4>MENU N - ANCAMAN</h4><button onclick="toggleHudMenu(null)">❌</button></div>
+            <div class="panel-header"><h4>MENU N - ANCAMAN STATUS</h4><button onclick="toggleHudMenu(null)">❌</button></div>
             <div class="panel-body">
               ${nList.length === 0 ? '<p>Kosong</p>' : `
                 <div class="carousel-wrapper">
                   <button class="carousel-arrow" onclick="moveCarousel('threat',-1,${nList.length})">‹</button>
-                  <strong class="text-gold">[${n.kind.toUpperCase()}] ${n.name} (${idx+1}/${nList.length})</strong>
+                  <strong class="text-gold">[${n.kind.toUpperCase()}] ${n.name}</strong>
                   <button class="carousel-arrow" onclick="moveCarousel('threat',1,${nList.length})">›</button>
                 </div>
-                <div class="stat-card-classic">
-                  <p style="font-size:0.75rem; margin-bottom:8px;"><strong>CERITA KRONOLOGI:</strong><br>${n.description}</p>
-                  ${n.hp ? `<div style="font-size:0.75rem; margin-bottom:8px;">🩸 SISA HP: <strong>${n.hp.cur} / ${n.hp.max}</strong></div>` : ''}
-                  
-                  ${n.attacks ? `
-                    <div style="font-size:0.7rem; color:#cca54a; margin-top:5px;">💥 DAFTAR SERANGAN BAWAAN:
-                      ${n.attacks.map(a => `<div style="background:#000; padding:3px; margin:2px 0;">• ${a.name} (Nilai Target: ${a.value})</div>`).join('')}
-                    </div>` : ''}
-
-                  ${n.kind === 'villain' ? `
-                    <div style="margin-top:10px; border-top:1px dashed #aa3333; padding-top:6px;"><span class="stat-label-mini">SENJATA KANON VILLAIN:</span> <button onclick="appendWeaponEntity('monster','${n.id}')" style="font-size:0.6rem;">[+ Senjata]</button>
-                      ${n.weapons?.map(w => `<div style="font-size:0.7rem; background:#000; padding:3px; margin:2px 0;">☠️ ${w.name} — Durabilitas: ${w.durability.cur}/${w.durability.max}</div>`).join('')}
-                    </div>` : ''}
+                <div class="stat-card-classic" style="border-color:#aa3333;">
+                  ${n.hp ? `<div style="font-size:0.8rem; margin-bottom:5px;">🩸 SISA HP: <strong>${n.hp.cur} / ${n.hp.max}</strong></div>` : ''}
+                  ${n.attacks ? `<span class="stat-label-mini" style="color:#f59898;">SERANGAN:</span>${n.attacks.map(a => `<div style="font-size:0.7rem;">• ${a.name} (Tgt: ${a.value})</div>`).join('')}` : ''}
+                  ${n.kind === 'villain' && n.weapons ? `<span class="stat-label-mini" style="color:#f59898; display:block; margin-top:5px;">SENJATA VILAIN:</span>${n.weapons.map(w => `<div style="font-size:0.7rem;">☠️ ${w.name} (Amunisi: ${w.durability.cur}/${w.durability.max})</div>`).join('')}` : ''}
                 </div>
               `}
             </div>`;
         }
         else if (state.activeHudMenu === 'M') {
           overlayContentHtml = `
-            <div class="panel-header"><h4>MENU M - LOKASI PETA</h4><button onclick="toggleHudMenu(null)">❌</button></div>
+            <div class="panel-header"><h4>MENU M - PETA & TOKEN</h4><button onclick="toggleHudMenu(null)">❌</button></div>
             <div class="panel-body">
               <select class="input-ctrl" onchange="state.selectedMapId=this.value; renderEngine();">
                 ${state.data.maps.map(m => `<option value="${m.id}" ${state.selectedMapId===m.id?'selected':''}>${m.name}</option>`).join('')}
@@ -567,21 +595,6 @@
                 ${state.data.characters.map(c => `<button class="btn-toggle" onclick="deployToken('${c.id}')">👤 ${c.name}</button>`).join('')}
                 ${state.data.monsters.map(m => `<button class="btn-toggle" onclick="deployToken('${m.id}')">👹 ${m.name}</button>`).join('')}
               </div>
-            </div>`;
-        }
-        else if (state.activeHudMenu === 'I') {
-          let items = state.data.items; let idx = state.carouselIdx.item; let activeItem = items[idx];
-          overlayContentHtml = `
-            <div class="panel-header"><h4>MENU I - ARSIP ITEM</h4><button onclick="toggleHudMenu(null)">❌</button></div>
-            <div class="panel-body">
-              ${items.length === 0 ? '<p>Kosong</p>' : `
-                <div class="carousel-wrapper">
-                  <button class="carousel-arrow" onclick="moveCarousel('item',-1,${items.length})">‹</button>
-                  <strong class="text-gold">${activeItem.name}</strong>
-                  <button class="carousel-arrow" onclick="moveCarousel('item',1,${items.length})">›</button>
-                </div>
-                <p style="font-size:0.75rem;">${activeItem.deskripsi}</p>
-              `}
             </div>`;
         }
 
@@ -594,7 +607,7 @@
                   let tok = state.tokens[id]; if (tok.mapId !== state.selectedMapId) return '';
                   let found = state.data.characters.find(c => c.id === id) || state.data.monsters.find(m => m.id === id);
                   if(!found) return '';
-                  return `<div class="token-item ${found.isDead?'token-dead':''}" id="tok_${id}" style="left:${tok.x}px; top:${tok.y}px;" draggable="true" ondragstart="handleTokenDragStart(event, '${id}')" oncontextmenu="event.preventDefault(); removeTokenFromBoard('${id}')"><img src="${found.image}"></div>`;
+                  return `<div class="token-item ${found.isDead?'token-dead':''}" id="tok_${id}" style="left:${tok.x}px; top:${tok.y}px;" draggable="true" ondragstart="handleTokenDragStart(event, '${id}')" oncontextmenu="event.preventDefault(); removeTokenFromBoard('${id}')"><img src="${found.face || found.image}"></div>`;
                 }).join('')}
               </div>
 
@@ -604,36 +617,30 @@
                 <button class="hud-btn ${state.activeHudMenu=='S'?'active':''}" onclick="toggleHudMenu('S')">S</button>
                 <button class="hud-btn ${state.activeHudMenu=='N'?'active':''}" onclick="toggleHudMenu('N')">N</button>
               </div>
-              <button class="hud-btn item-tab ${state.activeHudMenu=='I'?'active':''}" onclick="toggleHudMenu('I')">I</button>
 
               <div class="hud-panel-overlay" style="display:${state.activeHudMenu?'flex':'none'};">${overlayContentHtml}</div>
 
               ${state.activeHudMenu === null ? `
-                <div style="position:absolute; right:10px; top:10px; width:250px; max-height:calc(100% - 70px); overflow-y:auto; z-index:100;">
+                <div style="position:absolute; right:10px; top:10px; width:240px; max-height:calc(100% - 70px); overflow-y:auto; z-index:100;">
                   ${state.rollLogs.slice(0,4).map(log => `<div class="roll-card"><div class="roll-title-gold">${log.entityName}</div><div class="roll-banner-result ${log.cssClass}">${log.status} (${log.diceResult}/${log.targetSkill})</div></div>`).join('')}
                 </div>
               ` : ''}
 
-              <!-- TAB BAR UTAMA -->
+              <!-- INTERFACE UTAMA BAR '>' -->
               <div class="bar-ss-footer">
-                <span style="font-size:1.2rem; color:#cca54a; font-weight:bold; padding-right:3px;">&gt;</span>
-                
+                <span style="font-size:1.2rem; color:#cca54a; font-weight:bold;">&gt;</span>
                 <select id="ss_source" class="ss-input" onchange="syncRollSourceOptions()">
-                  <option value="manual">-- Pilih Kategori Aksi --</option>
+                  <option value="manual">-- Pilih Kategori --</option>
                   <option value="investigator_skill">1. Skill Investigator</option>
                   <option value="investigator_weapon">2. Senjata Investigator</option>
                   <option value="monster_attack">3. Serangan Monster</option>
                   <option value="villain_weapon">4. Senjata Villain</option>
                 </select>
-
-                <select id="ss_sub_target" class="ss-input" style="max-width:220px;"></select>
-                
-                <input id="ss_target_manual" type="number" class="ss-input" style="width:50px;" value="6" placeholder="Tgt">
-                <input id="ss_dice_result" type="number" class="ss-input" style="width:70px;" placeholder="2D6">
-                
-                <button onclick="processRollFromBarSS()" style="background:#cca54a; color:#000; border:none; padding:5px 12px; font-weight:bold; font-size:0.7rem; cursor:pointer;">SUBMIT</button>
-                
-                <div style="margin-left:auto; display:flex; gap:4px;">
+                <select id="ss_sub_target" class="ss-input" style="max-width:200px;"></select>
+                <input id="ss_target_manual" type="number" class="ss-input" style="width:45px;" value="6">
+                <input id="ss_dice_result" type="number" class="ss-input" style="width:60px;" placeholder="2D6">
+                <button onclick="processRollFromBarSS()" style="background:#cca54a; color:#000; border:none; padding:5px 10px; font-weight:bold; font-size:0.7rem; cursor:pointer;">SUBMIT</button>
+                <div style="margin-left:auto; display:flex; gap:3px;">
                   <button onclick="saveStateManual()" style="background:none; border:1px solid #cca54a; color:#cca54a; font-size:0.6rem; padding:3px;">SAVE</button>
                   <button onclick="setMode('setup')" style="background:#541616; color:#fff; border:none; font-size:0.6rem; padding:3px;">SETUP</button>
                 </div>
