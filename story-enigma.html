@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAMES STORY OF ENIGMA - CoC TTRPG Tools</title>
+    <style>
+        /* === RESET & ROOT VARIABLE VARIANT === */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        :root {
+            --bg-dark: #0d1117;
+            --bg-card: linear-gradient(135deg, #141f17 0%, #0d1110 100%);
+            --border-green: #238636;
+            --text-gold: #ffd700;
+            --text-light: #c9d1d9;
+            --btn-green: #238636;
+            --btn-red: #da3633;
+            --btn-blue: #1f6feb;
+            --success-bg: #1f6f2e;
+            --fail-bg: #891a1c;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* === ORIENTATION FORCE CONTROL === */
+        .mode-setup { display: flex; flex-direction: column; width: 100%; height: 100vh; }
+        .mode-main { display: none; width: 100%; height: 100vh; position: relative; }
+
+        @media screen and (orientation: portrait) {
+            body.in-main-session .mode-main {
+                transform: rotate(90deg);
+                transform-origin: bottom left;
+                position: absolute;
+                top: -100vw;
+                left: 0;
+                width: 100vh;
+                height: 100vw;
+                overflow: hidden;
+            }
+        }
+
+        /* === LAYOUT UTAMA CAMPAIGN INITIAL === */
+        #layer-initial { padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+        .campaign-box { background: var(--bg-card); border: 2px solid var(--border-green); border-radius: 8px; padding: 20px; width: 100%; max-width: 500px; margin-bottom: 20px; }
+        .campaign-item { background: rgba(255,255,255,0.05); padding: 12px; margin: 8px 0; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--text-gold); }
+
+        /* === UI REUSABLE COMPONENTS === */
+        .btn { padding: 10px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; text-align: center; }
+        .btn-g { background-color: var(--btn-green); }
+        .btn-r { background-color: var(--btn-red); }
+        .btn-b { background-color: var(--btn-blue); }
+        .btn-y { background-color: #b58900; color: black; }
+        .input-text { width: 100%; padding: 8px; margin: 6px 0; background: #21262d; border: 1px solid #30363d; color: white; border-radius: 4px; }
+        
+        /* === TABS & CAROUSEL SETUP === */
+        .tab-bar { display: flex; background: #161b22; border-bottom: 2px solid var(--border-green); }
+        .tab-btn { flex: 1; padding: 14px; background: none; border: none; color: white; font-weight: bold; cursor: pointer; }
+        .tab-btn.active { background: var(--border-green); color: var(--text-gold); }
+        .tab-content { display: none; padding: 15px; flex: 1; overflow-y: auto; }
+        .tab-content.active { display: block; }
+        .carousel { display: flex; align-items: center; justify-content: space-between; margin: 15px 0; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px; }
+
+        /* === STAT CARD SPECIFIC STYLE CLASSIC CoC === */
+        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0; }
+        .stat-box { background: var(--bg-card); border: 1px solid var(--border-green); border-radius: 6px; padding: 8px; text-align: center; position: relative; }
+        .stat-box .label { font-size: 10px; color: #8b949e; text-transform: uppercase; }
+        .stat-box .value { font-size: 24px; font-weight: bold; color: var(--text-gold); margin: 4px 0; }
+        .stat-box .max-val { font-size: 11px; color: #8b949e; }
+
+        /* === MAIN GAMEPLAY GRID LAYOUT === */
+        .main-grid { display: grid; grid-template-columns: 240px 1fr; grid-template-rows: 1fr 140px; width: 100%; height: 100vh; }
+        .sidebar-left { background: #161b22; border-right: 2px solid var(--border-green); padding: 8px; display: flex; flex-direction: column; gap: 8px; z-index: 10; }
+        .board-container { position: relative; background: #000; overflow: auto; display: flex; align-items: center; justify-content: center; }
+        #map-board { position: relative; background-size: contain; background-repeat: no-repeat; background-position: center; }
+        .token { position: absolute; width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--text-gold); cursor: move; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: white; background-size: cover; background-position: center; text-shadow: 1px 1px 2px black; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
+        .token.dead { filter: grayscale(100%); opacity: 0.7; border-color: red; }
+        
+        /* === BOTTOM ROLL BAR (DISHORD BOT CARD STYLE) === */
+        .bottom-roll-bar { grid-column: span 2; background: #0d1117; border-top: 3px solid var(--border-green); display: grid; grid-template-columns: 350px 1fr; padding: 8px; gap: 10px; z-index: 20; }
+        .roll-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; overflow-y: auto; height: 100%; }
+        .roll-feed { display: flex; gap: 10px; overflow-x: auto; align-items: center; padding-right: 15px; }
+        .roll-card { min-width: 260px; max-width: 260px; background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 10px; font-size: 12px; }
+        .roll-card .header { font-size: 10px; color: #8b949e; display: flex; justify-content: space-between; }
+        .roll-card .title { font-size: 16px; font-weight: bold; color: var(--text-gold); margin: 4px 0; }
+        .roll-card .banner { padding: 6px; text-align: center; font-weight: bold; border-radius: 4px; margin: 6px 0; font-size: 14px; }
+        .roll-card .banner.success { background-color: var(--success-bg); }
+        .roll-card .banner.fail { background-color: var(--fail-bg); }
+
+        /* === OVERLAY PANEL FLOATING === */
+        .overlay-panel { position: absolute; left: 250px; top: 10px; right: 10px; bottom: 150px; background: rgba(13,17,23,0.95); border: 2px solid var(--border-green); border-radius: 8px; z-index: 100; display: none; padding: 15px; overflow-y: auto; }
+        .close-overlay { position: absolute; right: 15px; top: 15px; font-size: 20px; color: red; cursor: pointer; font-weight: bold; }
+        
+        .placement-indicator { background: #b58900; color: black; padding: 8px; font-weight: bold; text-align: center; width: 100%; display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- LAYER INITIAL: MANAJEMEN CAMPAIGN -->
+    <div id="layer-initial">
+        <h1 style="color: var(--text-gold); margin-bottom: 20px;">GAMES STORY OF ENIGMA</h1>
+        <div class="campaign-box">
+            <h3>Buat Judul Story Baru</h3>
+            <input type="text" id="new-campaign-title" class="input-text" placeholder="Masukkan Nama Judul Campaign...">
+            <button class="btn btn-g" style="width:100%; margin-top:8px;" onclick="createCampaign()">Tambah Campaign Story Game</button>
+        </div>
+        <div class="campaign-box" style="max-height: 300px; overflow-y: auto;">
+            <h3>Daftar Campaign Tersimpan</h3>
+            <div id="campaign-list"></div>
+        </div>
+    </div>
+
+    <!-- MODE SETUP (PORTRAIT) -->
+    <div id="mode-setup" class="mode-setup">
+        <div class="tab-bar">
+            <button class="tab-btn active" onclick="switchSetupTab('s-peta')">Peta</button>
+            <button class="tab-btn" onclick="switchSetupTab('s-karakter')">Karakter</button>
+            <button class="tab-btn" onclick="switchSetupTab('s-sanity')">Sanity & NPC</button>
+            <button class="tab-btn" onclick="switchSetupTab('s-item')">Item</button>
+        </div>
+
+        <!-- Tab Peta -->
+        <div id="s-peta" class="tab-content active">
+            <h3>Manajemen Peta</h3>
+            <input type="text" id="map-name" class="input-text" placeholder="Nama Lokasi/Peta">
+            <input type="text" id="map-url" class="input-text" placeholder="URL Gambar Background">
+            <button class="btn btn-g" onclick="addMap()">Tambah Peta</button>
+            <hr style="margin:15px 0; border:1px solid #30363d;">
+            <div id="setup-map-list"></div>
+        </div>
+
+        <!-- Tab Karakter -->
+        <div id="s-karakter" class="tab-content">
+            <h3>Tambah Investigator</h3>
+            <input type="text" id="char-name" class="input-text" placeholder="Nama Investigator">
+            <input type="text" id="char-img" class="input-text" placeholder="URL Foto/Avatar">
+            <textarea id="char-bio" class="input-text" placeholder="Biografi/Prolog Cerita" rows="3"></textarea>
+            <div class="stat-grid">
+                <input type="number" id="char-hp" class="input-text" placeholder="Max HP">
+                <input type="number" id="char-san" class="input-text" placeholder="Max SAN">
+                <input type="number" id="char-mp" class="input-text" placeholder="Max MP">
+                <input type="number" id="char-luck" class="input-text" placeholder="Max Luck">
+            </div>
+            <button class="btn btn-g" onclick="addCharacter()">Tambah Investigator</button>
+            
+            <div class="carousel">
+                <button class="btn btn-b" onclick="navigateCarousel('char', -1)">&lt;</button>
+                <div id="setup-char-display" style="text-align:center; flex:1;">Belum ada karakter</div>
+                <button class="btn btn-b" onclick="navigateCarousel('char', 1)">&gt;</button>
+            </div>
+            <div style="text-align:center;"><button class="btn btn-r" onclick="deleteCurrentCarousel('char')">Hapus Karakter Ini</button></div>
+        </div>
+
+        <!-- Tab Sanity / NPC Management -->
+        <div id="s-sanity" class="tab-content">
+            <h3>Manajemen Ancaman (NPC, Monster, Villain)</h3>
+            <input type="text" id="n-name" class="input-text" placeholder="Nama Entitas">
+            <input type="text" id="n-img" class="input-text" placeholder="URL Gambar">
+            <textarea id="n-desc" class="input-text" placeholder="Deskripsi/Latar Belakang" rows="2"></textarea>
+            <div style="display:flex; gap:10px; margin:5px 0;">
+                <label><input type="radio" name="n-kind" value="npc" checked onclick="toggleNFields()"> NPC</label>
+                <label><input type="radio" name="n-kind" value="monster" onclick="toggleNFields()"> Monster</label>
+                <label><input type="radio" name="n-kind" value="villain" onclick="toggleNFields()"> Villain</label>
+            </div>
+            <div id="n-hp-section" style="display:none;">
+                <input type="number" id="n-hp" class="input-text" placeholder="Max HP">
+            </div>
+            <button class="btn btn-g" onclick="addThreat()">Tambah Entitas</button>
+            <hr style="margin:15px 0; border:1px solid #30363d;">
+            <div id="setup-threat-list" style="max-height:200px; overflow-y:auto;"></div>
+        </div>
+
+        <!-- Tab Item -->
+        <div id="s-item" class="tab-content">
+            <h3>Tambah Item Buku, Artefak & File</h3>
+            <input type="text" id="item-name" class="input-text" placeholder="Nama Item">
+            <input type="text" id="item-img" class="input-text" placeholder="URL Foto Item">
+            <textarea id="item-desc" class="input-text" placeholder="Cerita / Fungsi Item" rows="3"></textarea>
+            <button class="btn btn-g" onclick="addItem()">Tambah Item</button>
+            
+            <div class="carousel">
+                <button class="btn btn-b" onclick="navigateCarousel('item', -1)">&lt;</button>
+                <div id="setup-item-display" style="text-align:center; flex:1;">Belum ada item</div>
+                <button class="btn btn-b" onclick="navigateCarousel('item', 1)">&gt;</button>
+            </div>
+            <div style="text-align:center;"><button class="btn btn-r" onclick="deleteCurrentCarousel('item')">Hapus Item Ini</button></div>
+        </div>
+
+        <!-- FOOTER SETUP NAVIGATION -->
+        <div style="margin-top:auto; padding:15px; display:flex; justify-content:space-between; background:#161b22; border-top:1px solid #30363d;">
+            <button class="btn btn-r" onclick="exitToCampaignSelection()">Keluar Campaign</button>
+            <button class="btn btn-y" onclick="saveData()">SIMPAN &gt;_&lt;</button>
+            <button class="btn btn-g" onclick="enterMainMode()">Mulai Main ▶</button>
+        </div>
+    </div>
+
+    <!-- MODE MAIN (LANDSCAPE ENFORCED VIA CSS) -->
+    <div id="mode-main" class="mode-main">
+        <div class="main-grid">
+            
+            <!-- SIDEBAR TOMBOL UTAMA MENU -->
+            <div class="sidebar-left">
+                <h4 id="main-title-display" style="color:var(--text-gold); font-size:12px; text-align:center;">STORY</h4>
+                <button class="btn btn-b" onclick="openMainOverlay('M')">M — Peta</button>
+                <button class="btn btn-b" onclick="openMainOverlay('C')">C — Cerita</button>
+                <button class="btn btn-b" onclick="openMainOverlay('S')">S — Sanity</button>
+                <button class="btn btn-b item-tab" style="position:fixed; left:8px; top:170px;" onclick="openMainOverlay('I')">I — Item</button>
+                
+                <div style="margin-top:auto; display:flex; flex-direction:column; gap:6px;">
+                    <button class="btn btn-y" style="font-size:11px;" onclick="saveData()">SIMPAN</button>
+                    <button class="btn btn-r" style="font-size:11px;" onclick="exitToSetupMode()">KELUAR</button>
+                </div>
+            </div>
+
+            <!-- BOARD VIEW AREA -->
+            <div class="board-container" id="board-container">
+                <div id="placement-bar" class="placement-indicator"></div>
+                <div id="map-board" onclick="handleBoardClick(event)"></div>
+            </div>
+
+            <!-- BAR BAWAH INPUT & FEED KOCKAN DADU -->
+            <div class="bottom-roll-bar">
+                <div class="roll-inputs">
+                    <select id="roll-source" class="input-text" style="margin:2px 0;" onchange="updateRollSubOptions()">
+                        <option value="investigator">Skill Investigator</option>
+                        <option value="threat">Serangan Monster/Villain</option>
+                        <option value="weapon-char">Senjata Karakter</option>
+                        <option value="weapon-villain">Senjata Villain</option>
+                    </select>
+                    <select id="roll-entity-select" class="input-text" style="margin:2px 0;" onchange="updateRollTargetOptions()"></select>
+                    <select id="roll-target-select" class="input-text" style="margin:2px 0;"></select>
+                    <select id="roll-difficulty" class="input-text" style="margin:2px 0;">
+                        <option value="biasa">Biasa (<= Target)</option>
+                        <option value="sulit">Sulit (<= Target - 2)</option>
+                        <option value="ekstrem">Ekstrem (<= Target - 4)</option>
+                    </select>
+                    <input type="number" id="roll-target-val" class="input-text" style="margin:2px 0;" placeholder="Target (2-12)" min="2" max="12">
+                    <input type="number" id="roll-dice-val" class="input-text" style="margin:2px 0;" placeholder="Hasil 2D6 Fisik" min="2" max="12">
+                    <button class="btn btn-g" style="grid-column: span 2; padding:4px;" onclick="processDiceRoll()">Submit Hasil Roll</button>
+                </div>
+                <div class="roll-feed" id="roll-feed-cards">
+                    <!-- Dinamis Diisi Kartu Roll -->
+                </div>
+            </div>
+        </div>
+
+        <!-- FLOATING OVERLAY MENUS -->
+        <!-- Overlay M (Peta & Token Split) -->
+        <div id="overlay-M" class="overlay-panel">
+            <span class="close-overlay" onclick="closeMainOverlay()">X</span>
+            <h2>Manajemen Peta & Pemisahan Peta Token</h2>
+            <div style="display:flex; gap:20px; margin-top:15px;">
+                <div style="flex:1;">
+                    <h3>Pilih Gambar Peta Aktif GM</h3>
+                    <div id="main-map-selector"></div>
+                    <div style="margin-top:15px; background:rgba(255,255,255,0.05); padding:10px; border-radius:6px;">
+                        <h4>Aksi Pemindahan Massal (Map Split)</h4>
+                        <button class="btn btn-b" style="margin:4px 0; width:100%;" onclick="mapSplitAction('all')">Tarik Semua Token Ke Peta Ini</button>
+                        <button class="btn btn-y" style="margin:4px 0; width:100%;" onclick="mapSplitAction('selected')">Pindahkan Terpilih Ke Peta Ini</button>
+                    </div>
+                </div>
+                <div style="flex:1; border-left:1px solid #30363d; padding-left:15px;">
+                    <h3>Daftar Entitas & Penempatan</h3>
+                    <div id="main-token-placement-list" style="max-height:250px; overflow-y:auto;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overlay C (Cerita) -->
+        <div id="overlay-C" class="overlay-panel">
+            <span class="close-overlay" onclick="closeMainOverlay()">X</span>
+            <h2>Latar Belakang & Prolog Cerita</h2>
+            <div id="main-story-carousel-container" style="margin-top:15px;"></div>
+        </div>
+
+        <!-- Overlay S (Sanity, Status, Skill, Senjata) -->
+        <div id="overlay-S" class="overlay-panel">
+            <span class="close-overlay" onclick="closeMainOverlay()">X</span>
+            <h2>Pusat Status Karakter & Ancaman</h2>
+            <div id="main-sanity-hub" style="margin-top:15px;"></div>
+        </div>
+
+        <!-- Overlay I (Item Detail) -->
+        <div id="overlay-I" class="overlay-panel">
+            <span class="close-overlay" onclick="closeMainOverlay()">X</span>
+            <h2>Daftar Deskripsi Buku Tua, Artefak & File</h2>
+            <div id="main-item-carousel-container" style="margin-top:15px;"></div>
+        </div>
+    </div>
+
+    <!-- SCRIPT ENGINE CORE -->
+    <script>
+        // --- DATA ARCHITECTURE DEFINITION ---
+        let db = {
+            currentCampaign: "",
+            campaigns: {},
+            data: {
+                maps: [],
+                investigators: [],
+                monsters: [],
+                items: [],
+                tokens: {}, // token positions mapped by entity unique ID
+                rolls: []
+            }
+        };
+
+        // --- STATE TRANSIENT MANAGEMENT ---
+        let state = {
+            selectedMapId: null,
+            carouselIndex: { char: 0, item: 0, mainChar: 0, mainItem: 0 },
+            placingTokenId: null,
+            placingTokenKind: null
+        };
+
+        // Formula Sanity Check Config
+        const sanityFormulas = ["1D2", "1D3", "1D4", "1D4+1", "1D6", "1D6+1", "1D8", "1D10"];
+
+        // Initialization
+        window.onload = function() {
+            loadAllFromStorage();
+            renderCampaignList();
+        };
+
+        function loadAllFromStorage() {
+            let stored = localStorage.getItem("STORY_ENIGMA_DB");
+            if(stored) {
+                db = JSON.parse(stored);
+            }
+        }
+
+        function saveData() {
+            if(db.currentCampaign) {
+                db.campaigns[db.currentCampaign] = JSON.parse(JSON.stringify(db.data));
+            }
+            localStorage.setItem("STORY_ENIGMA_DB", JSON.stringify(db));
+            alert("Seluruh data berhasil disimpan persisten!");
+        }
+
+        // --- CAMPAIGN MANAGEMENT LAYER ---
+        function createCampaign() {
+            let title = document.getElementById("new-campaign-title").value.trim();
+            if(!title) return alert("Judul tidak boleh kosong!");
+            if(db.campaigns[title]) return alert("Judul Campaign sudah ada!");
+            
+            db.campaigns[title] = { maps: [], investigators: [], monsters: [], items: [], tokens: {}, rolls: [] };
+            document.getElementById("new-campaign-title").value = "";
+            renderCampaignList();
+        }
+
+        function renderCampaignList() {
+            let html = "";
+            for(let title in db.campaigns) {
+                html += `<div class="campaign-item">
+                    <span><b>${title}</b></span>
+                    <div>
+                        <button class="btn btn-g" onclick="selectCampaign('${title}')">Buka</button>
+                        <button class="btn btn-r" onclick="deleteCampaign('${title}')">Hapus</button>
+                    </div>
+                </div>`;
+            }
+            document.getElementById("campaign-list").innerHTML = html || "<p style='color:#8b949e;'>Belum ada game disimpan.</p>";
+        }
+
+        function selectCampaign(title) {
+            db.currentCampaign = title;
+            db.data = db.campaigns[title];
+            document.getElementById("layer-initial").style.display = "none";
+            document.getElementById("mode-setup").style.display = "flex";
+            document.getElementById("main-title-display").innerText = title;
+            refreshSetupUI();
+        }
+
+        function deleteCampaign(title) {
+            if(confirm(`Hapus campaign "${title}" secara permanen?`)) {
+                delete db.campaigns[title];
+                if(db.currentCampaign === title) db.currentCampaign = "";
+                saveAllToStorageDirect();
+                renderCampaignList();
+            }
+        }
+
+        function saveAllToStorageDirect() {
+            localStorage.setItem("STORY_ENIGMA_DB", JSON.stringify(db));
+        }
+
+        function exitToCampaignSelection() {
+            document.getElementById("mode-setup").style.display = "none";
+            document.getElementById("layer-initial").style.display = "flex";
+            renderCampaignList();
+        }
+
+        // --- SETUP MODE LOGICS ---
+        function switchSetupTab(tabId) {
+            document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+            document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+            document.getElementById(tabId).classList.add("active");
+            event.target.classList.add("active");
+            refreshSetupUI();
+        }
+
+        function toggleNFields() {
+            let kind = document.querySelector('input[name="n-kind"]:checked').value;
+            document.getElementById("n-hp-section").style.display = (kind === 'npc') ? 'none' : 'block';
+        }
+
+        function addMap() {
+            let name = document.getElementById("map-name").value.trim();
+            let url = document.getElementById("map-url").value.trim();
+            if(!name || !url) return alert("Lengkapi data peta!");
+            db.data.maps.push({ id: 'map_' + Date.now(), name: name, image: url });
+            document.getElementById("map-name").value = "";
+            document.getElementById("map-url").value = "";
+            refreshSetupUI();
+        }
+
+        function addCharacter() {
+            let name = document.getElementById("char-name").value.trim();
+            let img = document.getElementById("char-img").value.trim() || "https://placehold.co/150";
+            let bio = document.getElementById("char-bio").value.trim();
+            let hp = parseInt(document.getElementById("char-hp").value) || 10;
+            let san = parseInt(document.getElementById("char-san").value) || 10;
+            let mp = parseInt(document.getElementById("char-mp").value) || 10;
+            let luck = parseInt(document.getElementById("char-luck").value) || 7;
+
+            if(!name) return alert("Nama harus diisi!");
+            db.data.investigators.push({
+                id: 'char_' + Date.now(), name, image: img, description: bio,
+                hp: { cur: hp, max: hp }, sanity: { cur: san, max: san }, mp: { cur: mp, max: mp }, luck: { cur: luck, max: luck },
+                skills: [{ name: "Pencarian Tersembunyi", val: 5 }, { name: "Bicara Cepat", val: 4 }],
+                weapons: [], horrorForced: false, horrorReason: "", conditions: [], logs: []
+            });
+            
+            // clear fields
+            ["char-name","char-img","char-bio","char-hp","char-san","char-mp","char-luck"].forEach(id=>document.getElementById(id).value="");
+            refreshSetupUI();
+        }
+
+        function addThreat() {
+            let name = document.getElementById("n-name").value.trim();
+            let img = document.getElementById("n-img").value.trim() || "https://placehold.co/150";
+            let desc = document.getElementById("n-desc").value.trim();
+            let kind = document.querySelector('input[name="n-kind"]:checked').value;
+            
+            if(!name) return alert("Nama harus diisi!");
+            
+            let threatObj = {
+                id: 'threat_' + Date.now(), name, image: img, description: desc, kind,
+                isDead: false, deathOverride: null
+            };
+
+            if(kind !== 'npc') {
+                let hp = parseInt(document.getElementById("n-hp").value) || 15;
+                threatObj.hp = { cur: hp, max: hp };
+                threatObj.attacks = [{ id: 'atk_1', name: "Cakar", value: 4, isArea: false }];
+                if(kind === 'villain') threatObj.weapons = [];
+            }
+
+            db.data.monsters.push(threatObj);
+            document.getElementById("n-name").value = "";
+            document.getElementById("n-desc").value = "";
+            document.getElementById("n-hp").value = "";
+            refreshSetupUI();
+        }
+
+        function addItem() {
+            let name = document.getElementById("item-name").value.trim();
+            let img = document.getElementById("item-img").value.trim() || "https://placehold.co/150";
+            let desc = document.getElementById("item-desc").value.trim();
+            if(!name) return alert("Nama item diperlukan!");
+
+            db.data.items.push({ id: 'item_' + Date.now(), name, image: img, description: desc });
+            document.getElementById("item-name").value = "";
+            document.getElementById("item-desc").value = "";
+            refreshSetupUI();
+        }
+
+        function navigateCarousel(type, dir) {
+            let list = (type === 'char') ? db.data.investigators : db.data.items;
+            if(list.length === 0) return;
+            state.carouselIndex[type] = (state.carouselIndex[type] + dir + list.length) % list.length;
+            renderCarouselView(type);
+        }
+
+        function deleteCurrentCarousel(type) {
+            let list = (type === 'char') ? db.data.investigators : db.data.items;
+            if(list.length === 0) return;
+            if(confirm("Hapus item/entitas terpilih ini?")) {
+                list.splice(state.carouselIndex[type], 1);
+                state.carouselIndex[type] = 0;
+                refreshSetupUI();
+            }
+        }
+
+        function deleteMapItem(id) {
+            db.data.maps = db.data.maps.filter(m => m.id !== id);
+            refreshSetupUI();
+        }
+
+        function deleteThreatItem(id) {
+            db.data.monsters = db.data.monsters.filter(m => m.id !== id);
+            refreshSetupUI();
+        }
+
+        function refreshSetupUI() {
+            // Map List Render
+            let mapHtml = "";
+            db.data.maps.forEach(m => {
+                mapHtml += `<div class="campaign-item"><span>${m.name}</span><button class="btn btn-r" onclick="deleteMapItem('${m.id}')">Hapus</button></div>`;
+            });
+            document.getElementById("setup-map-list").innerHTML = mapHtml || "Belum ada peta.";
+
+            // Threat List Render
+            let tHtml = "";
+            db.data.monsters.forEach(m => {
+                tHtml += `<div class="campaign-item"><span>[${m.kind.toUpperCase()}] ${m.name}</span><button class="btn btn-r" onclick="deleteThreatItem('${m.id}')">Hapus</button></div>`;
+            });
+            document.getElementById("setup-threat-list").innerHTML = tHtml || "Belum ada ancaman.";
+
+            renderCarouselView('char');
+            renderCarouselView('item');
+        }
+
+        function renderCarouselView(type) {
+            if(type === 'char') {
+                let display = document.getElementById("setup-char-display");
+                if(db.data.investigators.length === 0) { display.innerText = "Belum ada karakter"; return; }
+                let c = db.data.investigators[state.carouselIndex.char];
+                display.innerHTML = `<b>${c.name}</b><br><small>HP: ${c.hp.max} | SAN: ${c.sanity.max}</small>`;
+            } else if(type === 'item') {
+                let display = document.getElementById("setup-item-display");
+                if(db.data.items.length === 0) { display.innerText = "Belum ada item"; return; }
+                let it = db.data.items[state.carouselIndex.item];
+                display.innerHTML = `<b>${it.name}</b><br><small>${it.description.substring(0,40)}...</small>`;
+            }
+        }
+
+        // --- TRANSITION TO MAIN SESSION MODE ---
+        function enterMainMode() {
+            if(db.data.maps.length === 0) return alert("Harus memasukkan minimal 1 Peta sebelum bermain!");
+            document.getElementById("mode-setup").style.display = "none";
+            document.getElementById("mode-main").style.display = "block";
+            document.body.classList.add("in-main-session");
+            
+            if(!state.selectedMapId) state.selectedMapId = db.data.maps[0].id;
+            
+            updateRollSubOptions();
+            renderGameBoard();
+            renderRollCards();
+        }
+
+        function exitToSetupMode() {
+            document.body.classList.remove("in-main-session");
+            document.getElementById("mode-main").style.display = "none";
+            document.getElementById("mode-setup").style.display = "flex";
+            refreshSetupUI();
+        }
+
+        // --- BOARD CORE & MANUAL PLACEMENT MECHANICS ---
+        function renderGameBoard() {
+            let mapObj = db.data.maps.find(m => m.id === state.selectedMapId);
+            let board = document.getElementById("map-board");
+            if(!mapObj) { board.innerHTML = "Peta tidak ditemukan."; return; }
+
+            board.style.backgroundImage = `url('${mapObj.image}')`;
+            board.style.width = "800px";  // Ukuran base virtual
+            board.style.height = "500px";
+            board.innerHTML = "";
+
+            // Render Tokens yang terikat pada peta aktif ini (Map Split Rule)
+            for(let id in db.data.tokens) {
+                let tk = db.data.tokens[id];
+                if(tk.mapId !== state.selectedMapId) continue;
+
+                let ent = getEntityById(id);
+                if(!ent) continue;
+
+                let isDead = checkIfDead(ent);
+
+                let tokenEl = document.createElement("div");
+                tokenEl.className = `token ${isDead ? 'dead' : ''}`;
+                tokenEl.style.left = tk.x + "px";
+                tokenEl.style.top = tk.y + "px";
+                tokenEl.style.backgroundImage = `url('${ent.image}')`;
+                tokenEl.innerText = ent.name.substring(0,3);
+                tokenEl.title = ent.name;
+
+                // Drag functionality logic simple
+                tokenEl.onmousedown = function(e) {
+                    e.preventDefault();
+                    let shiftX = e.clientX - tokenEl.getBoundingClientRect().left;
+                    let shiftY = e.clientY - tokenEl.getBoundingClientRect().top;
+
+                    function moveAt(clientX, clientY) {
+                        let rect = board.getBoundingClientRect();
+                        let newX = clientX - rect.left - shiftX;
+                        let newY = clientY - rect.top - shiftY;
+                        
+                        // boundary lock
+                        if(newX < 0) newX = 0; if(newY < 0) newY = 0;
+                        if(newX > 755) newX = 755; if(newY > 455) newY = 455;
+
+                        tokenEl.style.left = newX + "px";
+                        tokenEl.style.top = newY + "px";
+                        tk.x = newX;
+                        tk.y = newY;
+                    }
+
+                    function onMouseMove(e) { moveAt(e.clientX, e.clientY); }
+                    document.addEventListener('mousemove', onMouseMove);
+                    document.onmouseup = function() {
+                        document.removeEventListener('mousemove', onMouseMove);
+                        document.onmouseup = null;
+                    };
+                };
+
+                // Context menu to remove from map board
+                tokenEl.oncontextmenu = function(e) {
+                    e.preventDefault();
+                    delete db.data.tokens[id];
+                    renderGameBoard();
+                    if(document.getElementById("overlay-M").style.display === "block") openMainOverlay('M');
+                };
+
+                board.appendChild(tokenEl);
+            }
+        }
+
+        function getEntityById(id) {
+            let res = db.data.investigators.find(i => i.id === id);
+            if(!res) res = db.data.monsters.find(m => m.id === id);
+            return res;
+        }
+
+        function checkIfDead(ent) {
+            if(ent.deathOverride !== null) return ent.deathOverride;
+            if(ent.hp && ent.hp.cur <= 0) return true;
+            return ent.isDead || false;
+        }
+
+        // Trigger mode klik manual penempatan token
+        function startManualPlacement(id, kind) {
+            state.placingTokenId = id;
+            state.placingTokenKind = kind;
+            let ent = getEntityById(id);
+            let bar = document.getElementById("placement-bar");
+            bar.innerText = `MODE PENEMPATAN: Klik area pada Peta untuk menaruh [${ent.name}]`;
+            bar.style.display = "block";
+            closeMainOverlay();
+        }
+
+        function handleBoardClick(event) {
+            if(!state.placingTokenId) return;
+            let board = document.getElementById("map-board");
+            let rect = board.getBoundingClientRect();
+            let clickX = event.clientX - rect.left - 22; // adjust icon center radius
+            let clickY = event.clientY - rect.top - 22;
+
+            db.data.tokens[state.placingTokenId] = {
+                mapId: state.selectedMapId,
+                x: clickX,
+                y: clickY
+            };
+
+            // reset indicator mode
+            state.placingTokenId = null;
+            state.placingTokenKind = null;
+            document.getElementById("placement-bar").style.display = "none";
+            renderGameBoard();
+        }
+
+        // --- OVERLAY INTERFACE ENGINE ---
+        function openMainOverlay(menu) {
+            document.querySelectorAll(".overlay-panel").forEach(el => el.style.display = "none");
+            let pnl = document.getElementById(`overlay-${menu}`);
+            if(!pnl) return;
+            pnl.style.display = "block";
+
+            // Populate content per tipe tab terpilih secara reaktif
+            if(menu === 'M') {
+                renderMenuM();
+            } else if(menu === 'C') {
+                renderMenuC();
+            } else if(menu === 'S') {
+                renderMenuS();
+            } else if(menu === 'I') {
+                renderMenuI();
+            }
+        }
+
+        function closeMainOverlay() {
+            document.querySelectorAll(".overlay-panel").forEach(el => el.style.display = "none");
+        }
+
+        // --- SUB-RENDER MENUS DATA INTERNAL ---
+        function renderMenuM() {
+            // Selectors Map List
+            let mSel = "";
+            db.data.maps.forEach(m => {
+                let activeStyle = (m.id === state.selectedMapId) ? "border:2px solid var(--text-gold); font-weight:bold;" : "";
+                mSel += `<button class="btn btn-b" style="display:block; width:100%; margin:4px 0; ${activeStyle}" onclick="switchActiveMap('${m.id}')">${m.name}</button>`;
+            });
+            document.getElementById("main-map-selector").innerHTML = mSel || "Peta Kosong";
+
+            // Tokens Placement List Management Grid
+            let tHtml = "";
+            // Part A: Investigators
+            tHtml += "<h4>Investigator</h4>";
+            db.data.investigators.forEach(i => {
+                let tokenState = db.data.tokens[i.id];
+                let locText = tokenState ? `Peta: ${getMapName(tokenState.mapId)}` : "Belum di Papan";
+                let chk = tokenState ? "" : "checked"; 
+                tHtml += `<div style="display:flex; justify-content:between; align-items:center; background:rgba(0,0,0,0.2); padding:4px; margin:2px 0;">
+                    <label><input type="checkbox" class="map-split-chk" value="${i.id}"> ${i.name} (${locText})</label>
+                    <button class="btn btn-g" style="padding:2px 6px; font-size:11px;" onclick="startManualPlacement('${i.id}','char')">Taruh / Pindah</button>
+                </div>`;
+            });
+
+            // Part B: Threats
+            tHtml += "<h4 style='margin-top:10px;'>Ancaman/NPC</h4>";
+            db.data.monsters.forEach(m => {
+                let tokenState = db.data.tokens[m.id];
+                let locText = tokenState ? `Peta: ${getMapName(tokenState.mapId)}` : "Belum di Papan";
+                tHtml += `<div style="display:flex; justify-content:between; align-items:center; background:rgba(0,0,0,0.2); padding:4px; margin:2px 0;">
+                    <label><input type="checkbox" class="map-split-chk" value="${m.id}"> [${m.kind.toUpperCase()}] ${m.name} (${locText})</label>
+                    <button class="btn btn-g" style="padding:2px 6px; font-size:11px;" onclick="startManualPlacement('${m.id}','threat')">Taruh</button>
+                </div>`;
+            });
+
+            document.getElementById("main-token-placement-list").innerHTML = tHtml;
+        }
+
+        function switchActiveMap(id) {
+            state.selectedMapId = id;
+            renderGameBoard();
+            renderMenuM();
+        }
+
+        function getMapName(id) {
+            let m = db.data.maps.find(x => x.id === id);
+            return m ? m.name : "Unknown";
+        }
+
+        function mapSplitAction(mode) {
+            if(mode === 'all') {
+                db.data.investigators.forEach(i => { if(db.data.tokens[i.id]) db.data.tokens[i.id].mapId = state.selectedMapId; });
+                db.data.monsters.forEach(m => { if(db.data.tokens[m.id]) db.data.tokens[m.id].mapId = state.selectedMapId; });
+            } else if(mode === 'selected') {
+                let chks = document.querySelectorAll(".map-split-chk:checked");
+                chks.forEach(c => {
+                    let id = c.value;
+                    if(!db.data.tokens[id]) {
+                        db.data.tokens[id] = { mapId: state.selectedMapId, x: 50, y: 50 };
+                    } else {
+                        db.data.tokens[id].mapId = state.selectedMapId;
+                    }
+                });
+            }
+            renderGameBoard();
+            renderMenuM();
+        }
+
+        function renderMenuC() {
+            if(db.data.investigators.length === 0) {
+                document.getElementById("main-story-carousel-container").innerHTML = "Tidak ada investigator.";
+                return;
+            }
+            let i = db.data.investigators[state.carouselIndex.mainChar];
+            let html = `<div class="carousel">
+                <button class="btn btn-b" onclick="navigateMainCarousel('char', -1)">&lt;</button>
+                <div style="display:flex; gap:20px; flex:1; padding:0 20px; text-align:left;">
+                    <img src="${i.image}" style="width:120px; height:150px; border-radius:6px; object-fit:cover; border:2px solid var(--border-green);">
+                    <div>
+                        <h2 style="color:var(--text-gold);">${i.name}</h2>
+                        <p style="margin-top:10px; font-style:italic; line-height:1.5;">${i.description || 'Tidak ada biodata/prolog tertulis.'}</p>
+                        <textarea class="input-text" style="margin-top:10px;" id="live-edit-bio" rows="3" placeholder="Update catatan cerita real-time...">${i.description || ''}</textarea>
+                        <button class="btn btn-g" style="padding:4px 8px; margin-top:4px;" onclick="saveLiveBio('${i.id}')">Simpan Perubahan Latar Belakang</button>
+                    </div>
+                </div>
+                <button class="btn btn-b" onclick="navigateMainCarousel('char', 1)">&gt;</button>
+            </div>`;
+            document.getElementById("main-story-carousel-container").innerHTML = html;
+        }
+
+        function saveLiveBio(id) {
+            let txt = document.getElementById("live-edit-bio").value;
+            let i = db.data.investigators.find(x => x.id === id);
+            if(i) i.description = txt;
+            alert("Bio cerita berhasil diperbarui!");
+        }
+
+        function renderMenuI() {
+            if(db.data.items.length === 0) {
+                document.getElementById("main-item-carousel-container").innerHTML = "Tidak ada item log buku/artefak.";
+                return;
+            }
+            let item = db.data.items[state.carouselIndex.mainItem];
+            let html = `<div class="carousel">
+                <button class="btn btn-b" onclick="navigateMainCarousel('item', -1)">&lt;</button>
+                <div style="display:flex; gap:20px; flex:1; padding:0 20px; text-align:left;">
+                    <img src="${item.image}" style="width:120px; height:150px; border-radius:6px; object-fit:cover; border:2px solid var(--border-green);">
+                    <div>
+                        <h2 style="color:var(--text-gold);">${item.name}</h2>
+                        <p style="margin-top:10px; line-height:1.5;">${item.description || 'Deskripsi item kosong.'}</p>
+                        <textarea class="input-text" style="margin-top:10px;" id="live-edit-item-desc" rows="3">${item.description || ''}</textarea>
+                        <button class="btn btn-g" style="padding:4px 8px; margin-top:4px;" onclick="saveLiveItemDesc('${item.id}')">Simpan Perubahan Deskripsi</button>
+                    </div>
+                </div>
+                <button class="btn btn-b" onclick="navigateMainCarousel('item', 1)">&gt;</button>
+            </div>`;
+            document.getElementById("main-item-carousel-container").innerHTML = html;
+        }
+
+        function saveLiveItemDesc(id) {
+            let txt = document.getElementById("live-edit-item-desc").value;
+            let it = db.data.items.find(x => x.id === id);
+            if(it) it.description = txt;
+            alert("Deskripsi item berhasil diperbarui!");
+        }
+
+        function navigateMainCarousel(type, dir) {
+            if(type === 'char') {
+                let len = db.data.investigators.length;
+                state.carouselIndex.mainChar = (state.carouselIndex.mainChar + dir + len) % len;
+                renderMenuC();
+            } else {
+                let len = db.data.items.length;
+                state.carouselIndex.mainItem = (state.carouselIndex.mainItem + dir + len) % len;
+                renderMenuI();
+            }
+        }
+
+        // --- INTERFACE HUB S: SANITY & STATUS MANAGEMENT COMPLETENESS ---
+        function renderMenuS() {
+            let html = "";
+
+            // BAGIAN INVESTIGATORS
+            html += "<h2 style='color:var(--text-gold); border-bottom:1px solid var(--border-green); padding-bottom:4px;'>Lembar Investigator Klasik</h2>";
+            db.data.investigators.forEach(i => {
+                let isDead = checkIfDead(i);
+                let isHoror = (i.hp.cur <= (i.hp.max / 2)) || i.horrorForced;
+
+                html += `<div style="border: 2px solid #238636; background:var(--bg-card); padding:12px; margin:10px 0; border-radius:6px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3 style="color:${isDead?'#ff4d4d':'#fff'};">${i.name} ${isDead?'[MATI]':''} ${isHoror?'⚠️ MODE HOROR':''}</h3>
+                        <div>
+                            <button class="btn ${isDead?'btn-b':'btn-r'}" style="padding:4px 8px; font-size:11px;" onclick="toggleDeathManual('${i.id}', 'char')">
+                                ${isDead?'Hidupkan Kembali':'Tandai Mati (Event Cerita)'}
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Kotak Stat Besar CoC Reusable Grid Layout Style -->
+                    <div class="stat-grid">
+                        <div class="stat-box">
+                            <span class="label">HP</span>
+                            <div class="value"><input type="number" value="${i.hp.cur}" style="width:45px; background:transparent; border:none; text-align:center; color:inherit; font-size:22px; font-weight:bold;" onchange="updateStatValue('${i.id}','hp',this.value)"></div>
+                            <span class="max-val">Max: ${i.hp.max}</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="label">Sanity</span>
+                            <div class="value"><input type="number" value="${i.sanity.cur}" style="width:45px; background:transparent; border:none; text-align:center; color:inherit; font-size:22px; font-weight:bold;" onchange="updateStatValue('${i.id}','sanity',this.value)"></div>
+                            <span class="max-val">Max: ${i.sanity.max}</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="label">MP</span>
+                            <div class="value"><input type="number" value="${i.mp.cur}" style="width:45px; background:transparent; border:none; text-align:center; color:inherit; font-size:22px; font-weight:bold;" onchange="updateStatValue('${i.id}','mp',this.value)"></div>
+                            <span class="max-val">Max: ${i.mp.max}</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="label">Luck</span>
+                            <div class="value"><input type="number" value="${i.luck.cur}" style="width:45px; background:transparent; border:none; text-align:center; color:inherit; font-size:22px; font-weight:bold;" onchange="updateStatValue('${i.id}','luck',this.value)"></div>
+                            <span class="max-val">Max: ${i.luck.max}</span>
+                        </div>
+                    </div>
+
+                    <!-- Formula Sanity Check Manual Log Counter -->
+                    <div style="background:rgba(0,0,0,0.3); padding:8px; border-radius:4px; margin:8px 0;">
+                        <span style="font-size:11px; color:var(--text-gold);"><b>Formula Penurunan Sanity (Catatan & Terapkan):</b></span>
+                        <div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:4px;">
+                            ${sanityFormulas.map(f => `<button class="btn btn-b" style="padding:2px 6px; font-size:11px;" onclick="promptSanityLoss('${i.id}','${f}')">${f}</button>`).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Force Override Horor & Kondisi -->
+                    <div style="font-size:12px; margin:8px 0; display:flex; gap:10px; align-items:center;">
+                        <label><input type="checkbox" ${i.horrorForced?'checked':''} onchange="toggleHororForce('${i.id}', this.checked)"> Paksa Aktif Dadu Horor</label>
+                        <input type="text" placeholder="Alasan Status Horor..." class="input-text" style="width:180px; padding:2px; margin:0;" value="${i.horrorReason || ''}" onchange="updateHororReason('${i.id}', this.value)">
+                    </div>
+
+                    <!-- List Kondisi Aktif Dengan Durasi -->
+                    <div style="margin:5px 0;">
+                        <span style="font-size:11px;">Kondisi/Status:</span>
+                        <button class="btn btn-g" style="padding:2px 6px; font-size:10px;" onclick="addConditionPrompt('${i.id}')">+ Kondisi</button>
+                        <div style="display:flex; gap:4px; flex-wrap:wrap; margin-top:4px;">
+                            ${i.conditions.map(c => `<span style="background:#30363d; padding:2px 6px; border-radius:4px; font-size:11px;">
+                                ${c.name} (${c.duration > 0 ? c.duration+' Giliran' : 'Permanen'}) 
+                                <button style="background:none; border:none; color:red; cursor:pointer; font-weight:bold;" onclick="advanceCondition('${i.id}','${c.id}')">-1</button>
+                            </span>`).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Senjata Investigator Section -->
+                    <div style="margin-top:10px; border-top:1px dashed #30363d; padding-top:6px;">
+                        <span style="font-size:12px; color:var(--text-gold);"><b>Gudang Senjata / Inventory:</b></span>
+                        <button class="btn btn-b" style="padding:1px 6px; font-size:10px;" onclick="addWeaponPrompt('${i.id}','char')">+ Tambah Senjata</button>
+                        <div style="margin-top:4px;">
+                            ${renderWeaponRows(i)}
+                        </div>
+                    </div>
+                </div>`;
+            });
+
+            // BAGIAN MONSTER & VILLAIN
+            html += "<h2 style='color:#ff4d4d; border-bottom:1px solid var(--btn-red); padding-bottom:4px; margin-top:20px;'>Daftar Ancaman & Musuh</h2>";
+            db.data.monsters.forEach(m => {
+                let isDead = checkIfDead(m);
+                let isNpc = m.kind === 'npc';
+
+                html += `<div style="border: 2px solid var(--btn-red); background:var(--bg-card); padding:12px; margin:10px 0; border-radius:6px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3>[${m.kind.toUpperCase()}] ${m.name} ${isDead?'[MATI]':''}</h3>
+                        <button class="btn ${isDead?'btn-b':'btn-r'}" style="padding:4px 8px; font-size:11px;" onclick="toggleDeathManual('${m.id}', 'threat')">
+                            ${isDead?'Hidupkan Kembali':'Tandai Mati (Event)'}
+                        </button>
+                    </div>`;
+
+                if(!isNpc) {
+                    html += `<div class="stat-grid" style="grid-template-columns: 1fr;">
+                        <div class="stat-box" style="border-color:var(--btn-red);">
+                            <span class="label">HP Ancaman</span>
+                            <div class="value"><input type="number" value="${m.hp.cur}" style="width:60px; background:transparent; border:none; text-align:center; color:inherit; font-size:22px; font-weight:bold;" onchange="updateThreatHP('${m.id}',this.value)"></div>
+                            <span class="max-val">Max HP: ${m.hp.max}</span>
+                        </div>
+                    </div>`;
+
+                    // Senjata jika villain
+                    if(m.kind === 'villain') {
+                        html += `<div style="margin-top:10px;">
+                            <span style="font-size:11px; color:var(--text-gold);">Senjata Villain:</span>
+                            <button class="btn btn-b" style="padding:1px 6px; font-size:10px;" onclick="addWeaponPrompt('${m.id}','threat')">+ Senjata Villain</button>
+                            <div style="margin-top:4px;">
+                                ${renderWeaponRows(m)}
+                            </div>
+                        </div>`;
+                    }
+                }
+                html += `</div>`;
+            });
+
+            document.getElementById("main-sanity-hub").innerHTML = html || "Tidak ada entitas.";
+        }
+
+        // --- SUB ENGINE UTILITY UPDATE DATA STATUS REAKTIF ---
+        function updateStatValue(id, stat, val) {
+            let i = db.data.investigators.find(x => x.id === id);
+            if(!i) return;
+            i[stat].cur = parseInt(val) || 0;
+            if(i[stat].cur < 0) i[stat].cur = 0;
+            if(i[stat].cur > i[stat].max) i[stat].cur = i[stat].max;
+            
+            // Re-sync UI & Board (Kematian Otomatis Terdeteksi saat render)
+            renderGameBoard();
+            renderMenuS();
+        }
+
+        function updateThreatHP(id, val) {
+            let m = db.data.monsters.find(x => x.id === id);
+            if(!m) return;
+            m.hp.cur = parseInt(val) || 0;
+            if(m.hp.cur < 0) m.hp.cur = 0;
+            renderGameBoard();
+            renderMenuS();
+        }
+
+        function toggleDeathManual(id, targetKind) {
+            let ent = getEntityById(id);
+            if(!ent) return;
+            
+            let isCurrentDead = checkIfDead(ent);
+            if(!isCurrentDead) {
+                if(window.confirm(`Apakah Anda yakin ingin mengeksekusi mati ${ent.name} lewat event cerita?`)) {
+                    ent.deathOverride = true;
+                }
+            } else {
+                ent.deathOverride = false;
+                if(ent.hp) ent.hp.cur = ent.hp.max; // Pulihkan minimal jika ada HP
+            }
+            renderGameBoard();
+            renderMenuS();
+        }
+
+        function toggleHororForce(id, val) {
+            let i = db.data.investigators.find(x => x.id === id);
+            if(i) i.horrorForced = val;
+            renderMenuS();
+        }
+
+        function updateHororReason(id, val) {
+            let i = db.data.investigators.find(x => x.id === id);
+            if(i) i.horrorReason = val;
+        }
+
+        function promptSanityLoss(id, formula) {
+            let resStr = prompt(`Masukkan hasil lemparan dadu fisik untuk formula ${formula}:`, "1");
+            let res = parseInt(resStr);
+            if(isNaN(res)) return alert("Input harus angka valid!");
+
+            let i = db.data.investigators.find(x => x.id === id);
+            if(!i) return;
+
+            i.sanity.cur -= res;
+            if(i.sanity.cur < 0) i.sanity.cur = 0;
+
+            // Masukkan log internal
+            let logMsg = `[Formula ${formula}] Berkurang -${res} SAN`;
+            i.logs.push(logMsg);
+
+            // AUTO GENERATE KARTU INTEGRATED KE FEED BAR BAWAH >
+            db.data.rolls.unshift({
+                id: 'roll_' + Date.now(),
+                timestamp: new Date().toLocaleTimeString(),
+                entityName: i.name,
+                checkName: `Sanity Loss (${formula})`,
+                difficulty: 'Biasa',
+                target: 12,
+                dice: res,
+                outcome: `TERAPKAN SANITY LOSS -${res}`,
+                isCustomSanity: true
+            });
+
+            renderGameBoard();
+            renderMenuS();
+            renderRollCards();
+        }
+
+        function addConditionPrompt(id) {
+            let name = prompt("Nama Kondisi (cth: Pingsan, Berdarah, Gila):");
+            if(!name) return;
+            let dur = parseInt(prompt("Durasi berapa giliran? (Ketik 0 jika permanen):", "3")) || 0;
+            
+            let i = db.data.investigators.find(x => x.id === id);
+            if(i) {
+                i.conditions.push({ id: 'cond_' + Date.now(), name, duration: dur });
+                renderMenuS();
+            }
+        }
+
+        function advanceCondition(charId, condId) {
+            let i = db.data.investigators.find(x => x.id === charId);
+            if(!i) return;
+            let c = i.conditions.find(x => x.id === condId);
+            if(!c) return;
+            
+            if(c.duration > 1) {
+                c.duration -= 1;
+            } else {
+                i.conditions = i.conditions.filter(x => x.id !== condId);
+            }
+            renderMenuS();
+        }
+
+        // --- WEAPONS SYSTEM ENGINE ---
+        function renderWeaponRows(entity) {
+            if(!entity.weapons || entity.weapons.length === 0) return "<small style='color:#8b949e;'>Tidak memegang senjata.</small>";
+            return entity.weapons.map(w => {
+                let labelDur = (w.type === 'firearm') ? 'Peluru' : 'Ketahanan';
+                return `<div style="display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.05); padding:4px; margin:2px 0; font-size:11px;">
+                    <span><b>${w.name}</b> (${w.type.toUpperCase()}) - ${labelDur}: ${w.durability.cur}/${w.durability.max}</span>
+                    <div>
+                        <input type="number" value="1" id="use-qty-${w.id}" style="width:30px; background:#000; border:1px solid #30363d; color:#fff; text-align:center;">
+                        <button class="btn btn-r" style="padding:1px 4px; font-size:10px;" onclick="useWeaponDirect('${entity.id}','${w.id}')">Gunakan</button>
+                        <button class="btn btn-g" style="padding:1px 4px; font-size:10px;" onclick="reloadWeaponDirect('${entity.id}','${w.id}')">Isi Ulang</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function addWeaponPrompt(id, kind) {
+            let name = prompt("Masukkan Nama Senjata:");
+            if(!name) return;
+            let type = confirm("Klik OK jika tipe MELEE\nKlik CANCEL jika FIREARM (Peluru)") ? "melee" : "firearm";
+            let maxDur = parseInt(prompt("Masukkan Kapasitas Peluru / Maksimal Ketahanan:", "6")) || 10;
+
+            let targetEnt = (kind === 'char') ? db.data.investigators.find(x => x.id === id) : db.data.monsters.find(x => x.id === id);
+            if(targetEnt) {
+                targetEnt.weapons.push({
+                    id: 'wpn_' + Date.now(), name, type, durability: { cur: maxDur, max: maxDur }
+                });
+                renderMenuS();
+                updateRollSubOptions();
+            }
+        }
+
+        function useWeaponDirect(entId, wpnId) {
+            let ent = getEntityById(entId);
+            if(!ent) return;
+            let w = ent.weapons.find(x => x.id === wpnId);
+            if(!w) return;
+
+            let qty = parseInt(document.getElementById(`use-qty-${wpnId}`).value) || 1;
+            w.durability.cur -= qty;
+            if(w.durability.cur < 0) w.durability.cur = 0;
+
+            alert(`Senjata ${w.name} digunakan! ${w.type==='firearm'?'Peluru':'Ketahanan'} berkurang ${qty}.`);
+            renderMenuS();
+        }
+
+        function reloadWeaponDirect(entId, wpnId) {
+            let ent = getEntityById(entId);
+            if(!ent) return;
+            let w = ent.weapons.find(x => x.id === wpnId);
+            if(!w) return;
+            w.durability.cur = w.durability.max;
+            renderMenuS();
+        }
+
+        // --- INTERGRATED DICE ROLL SYSTEM (2D6 UNDER SCALE 2-12) ---
+        function updateRollSubOptions() {
+            let src = document.getElementById("roll-source").value;
+            let elEnt = document.getElementById("roll-entity-select");
+            elEnt.innerHTML = "";
+
+            if(src === 'investigator' || src === 'weapon-char') {
+                db.data.investigators.forEach(i => {
+                    elEnt.innerHTML += `<option value="${i.id}">${i.name}</option>`;
+                });
+            } else {
+                db.data.monsters.forEach(m => {
+                    if(m.kind !== 'npc') elEnt.innerHTML += `<option value="${m.id}">[${m.kind.toUpperCase()}] ${m.name}</option>`;
+                });
+            }
+            updateRollTargetOptions();
+        }
+
+        function updateRollTargetOptions() {
+            let src = document.getElementById("roll-source").value;
+            let entId = document.getElementById("roll-entity-select").value;
+            let elTarget = document.getElementById("roll-target-select");
+            elTarget.innerHTML = "";
+
+            let ent = getEntityById(entId);
+            if(!ent) return;
+
+            if(src === 'investigator') {
+                ent.skills.forEach(s => {
+                    elTarget.innerHTML += `<option value="${s.name}" data-val="${s.val}">${s.name}</option>`;
+                });
+                // Default stats also checkable
+                elTarget.innerHTML += `<option value="Status HP Check" data-val="${ent.hp.cur}">HP Status</option>`;
+                elTarget.innerHTML += `<option value="Status Luck Check" data-val="${ent.luck.cur}">Luck Status</option>`;
+            } else if(src === 'threat') {
+                if(ent.attacks) {
+                    ent.attacks.forEach(a => {
+                        elTarget.innerHTML += `<option value="${a.name}" data-val="${a.value}">${a.name} (Atk)</option>`;
+                    });
+                }
+            } else if(src === 'weapon-char' || src === 'weapon-villain') {
+                if(ent.weapons) {
+                    ent.weapons.forEach(w => {
+                        elTarget.innerHTML += `<option value="${w.id}" data-val="6">${w.name}</option>`; // Default target 2D6 weapon is midpoint 6
+                    });
+                }
+            }
+        }
+
+        function processDiceRoll() {
+            let src = document.getElementById("roll-source").value;
+            let entId = document.getElementById("roll-entity-select").value;
+            let subTarget = document.getElementById("roll-target-select").value;
+            let diff = document.getElementById("roll-difficulty").value;
+            
+            let targetInput = parseInt(document.getElementById("roll-target-val").value);
+            let diceInput = parseInt(document.getElementById("roll-dice-val").value);
+
+            let ent = getEntityById(entId);
+            if(!ent) return alert("Pilih entitas sumber roll!");
+            if(isNaN(diceInput) || diceInput < 2 || diceInput > 12) return alert("Hasil dadu fisik harus bernilai rentang 2-12 (Hasil penjumlahan 2D6)!");
+
+            // Tentukan target value dasar jika tidak diisi manual oleh GM
+            let baseTarget = targetInput;
+            if(isNaN(baseTarget)) {
+                let opt = document.getElementById("roll-target-select").options[document.getElementById("roll-target-select").selectedIndex];
+                baseTarget = opt ? parseInt(opt.getAttribute("data-val")) : 6;
+            }
+
+            // Hitung kalkulasi tingkat sukses (ROLL UNDER 2D6 AMBANG)
+            let modifiedTarget = baseTarget;
+            if(diff === 'sulit') modifiedTarget = baseTarget - 2;
+            if(diff === 'ekstrem') modifiedTarget = baseTarget - 4;
+            if(modifiedTarget < 2) modifiedTarget = 2; // Batas bawah logis dadu
+
+            let outcome = "GAGAL";
+            let isSuccess = false;
+
+            if(diceInput === 2) {
+                outcome = "SUKSES KRITIS (ANGKA 2)";
+                isSuccess = true;
+            } else if(diceInput === 12) {
+                outcome = "GAGAL TOTAL (ANGKA 12)";
+                isSuccess = false;
+            } else if(diceInput <= modifiedTarget) {
+                isSuccess = true;
+                if(diceInput <= (modifiedTarget - 4)) outcome = "SUKSES EKSTREM";
+                else if(diceInput <= (modifiedTarget - 2)) outcome = "SUKSES SULIT";
+                else outcome = "BERHASIL";
+            }
+
+            // AUTO DECREMENT WEAPON INTEGRATION AMUNISI JIKA ROLL ADALAH SENJATA
+            let displayCheckName = subTarget;
+            if(src === 'weapon-char' || src === 'weapon-villain') {
+                let w = ent.weapons.find(x => x.id === subTarget);
+                if(w) {
+                    displayCheckName = `Menyerang dengan ${w.name}`;
+                    w.durability.cur -= 1;
+                    if(w.durability.cur < 0) w.durability.cur = 0;
+                    renderMenuS();
+                }
+            }
+
+            // Tambahkan objek baru ke history logs array feed paling atas
+            db.data.rolls.unshift({
+                id: 'roll_' + Date.now(),
+                timestamp: new Date().toLocaleTimeString(),
+                entityName: ent.name,
+                checkName: displayCheckName,
+                difficulty: diff.toUpperCase(),
+                target: modifiedTarget,
+                dice: diceInput,
+                outcome: outcome,
+                isSuccess: isSuccess
+            });
+
+            // reset field inputs
+            document.getElementById("roll-dice-val").value = "";
+            renderRollCards();
+        }
+
+        function renderRollCards() {
+            let container = document.getElementById("roll-feed-cards");
+            container.innerHTML = "";
+
+            // Ambil maksimal 10 data kocokan terakhir biar hemat memory render (Low-end optimasi)
+            let limitedList = db.data.rolls.slice(0, 10);
+            
+            limitedList.forEach(r => {
+                let isSuccess = r.isSuccess || r.isCustomSanity;
+                let bgBanner = isSuccess ? "success" : "fail";
+                
+                container.innerHTML += `<div class="roll-card">
+                    <div class="header"><span>${r.entityName}</span><span>${r.timestamp}</span></div>
+                    <div class="title">${r.checkName}</div>
+                    <div style="font-size:10px; color:#8b949e;">Kesulitan: ${r.difficulty}</div>
+                    <div class="banner ${bgBanner}">${r.outcome}</div>
+                    <div style="display:flex; justify-content:space-between; font-size:11px; margin-top:4px;">
+                        <span>Dadu Fisik: <b>${r.dice}</b></span>
+                        <span>Target: <b>${r.target}</b></span>
+                    </div>
+                </div>`;
+            });
+        }
+    </script>
+</body>
+</html>
